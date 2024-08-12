@@ -1,0 +1,32 @@
+version: '3'
+services:
+  eureka-server:
+    build: ./eureka-server  # Budowanie obrazu z katalogu eureka-server
+    ports:
+      - "8761:8761"
+
+  auth-server:
+    build: ./auth-server  # Budowanie obrazu z katalogu auth-server
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - eureka-server
+
+  employee-service:
+    build: ./employee-service  # Budowanie obrazu z katalogu employee-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - eureka-server
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: marcin123
+    ports:
+      - "5432:5432"
