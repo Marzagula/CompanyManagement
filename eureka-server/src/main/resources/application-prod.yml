@@ -2,6 +2,8 @@ server:
   port: 8761
 spring:
   profiles: prod
+  application:
+    name: eureka-server
 eureka:
   server:
     waitTimeInMsWhenSyncEmpty: 5000

@@ -10,3 +10,5 @@ server:
   port: 8761
 spring:
   profiles: dev
+  application:
+    name: eureka-server
