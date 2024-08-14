@@ -18,7 +18,7 @@ public class AuthResourceServerConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable())
+                .csrf(crsf -> crsf.disable())
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/public/**").permitAll();
                     auth.anyRequest().authenticated();
@@ -27,6 +27,7 @@ public class AuthResourceServerConfig {
                         .jwt(Customizer.withDefaults())
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .httpBasic(Customizer.withDefaults())
                 .build();
     }
 

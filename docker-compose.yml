@@ -4,13 +4,18 @@ services:
     build: ./eureka-server  # Budowanie obrazu z katalogu eureka-server
     ports:
       - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
 
   auth-server:
     build: ./auth-server  # Budowanie obrazu z katalogu auth-server
     ports:
-      - "8081:8081"
+      - "9000:9000"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
+      - spring.datasource.url=jdbc:postgresql://db:5432/postgres
+
     depends_on:
       - eureka-server
 
@@ -20,6 +25,9 @@ services:
       - "8082:8082"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
+      - spring.datasource.url=jdbc:postgresql://db:5432/postgres
+
     depends_on:
       - eureka-server
 

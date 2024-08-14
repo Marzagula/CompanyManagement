@@ -4,7 +4,6 @@ import com.gminds.auth_server.config.RsaKeyProperties;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ public class JwkSetController {
 
     @GetMapping("/jwks")
     public Map<String, Object> keys() {
-        JWK jwk = new RSAKey.Builder(rsaKeys.publicKey()).privateKey(rsaKeys.privateKey()).build();
+        JWK jwk = new RSAKey.Builder(rsaKeys.publicKey()).build();
         JWKSet jwkSet = new JWKSet(jwk);
         return jwkSet.toJSONObject();
     }
