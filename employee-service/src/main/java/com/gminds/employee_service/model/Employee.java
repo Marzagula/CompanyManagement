@@ -1,6 +1,13 @@
 package com.gminds.employee_service.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "employee")
 public class Employee {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
     String name;
     String surname;
 
