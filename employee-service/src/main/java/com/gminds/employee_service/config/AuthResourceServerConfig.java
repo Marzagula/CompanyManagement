@@ -1,6 +1,7 @@
 package com.gminds.employee_service.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -8,6 +9,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+@Configuration
 public class AuthResourceServerConfig {
 
     private final RsaKeyProperties rsaKeys;
@@ -20,7 +22,6 @@ public class AuthResourceServerConfig {
         return http
                 .csrf(crsf -> crsf.disable())
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/public/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer((oauth2) -> oauth2
