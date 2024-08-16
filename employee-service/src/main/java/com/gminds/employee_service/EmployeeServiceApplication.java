@@ -10,11 +10,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableDiscoveryClient
 @EnableConfigurationProperties(RsaKeyProperties.class)
 public class EmployeeServiceApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(EmployeeServiceApplication.class, args);
-	}
-/*TODO
-*  Komentarze opisujace bardziej skomplikowane metody
-*  Implementacja @ControllerAdvice
-* */
+    public static void main(String[] args) {
+        SpringApplication.run(EmployeeServiceApplication.class, args);
+    }
+    /*TODO
+     *  Testy
+     * */
 }

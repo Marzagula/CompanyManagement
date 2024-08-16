@@ -10,6 +10,7 @@ import org.mapstruct.factory.Mappers;
 public interface EmployeeCertificateMapper {
     EmployeeCertificateMapper INSTANCE = Mappers.getMapper(EmployeeCertificateMapper.class);
 
+    @Mapping(source = "employee.id", target = "employeeId")
     EmployeeCertificateDTO toEmployeeCertificateDTO(EmployeeCertificate employeeCertificate);
 
     @Mapping(target = "employee", ignore = true)

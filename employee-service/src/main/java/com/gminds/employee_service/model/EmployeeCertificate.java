@@ -28,7 +28,8 @@ public class EmployeeCertificate {
     private String issuedBy;
 
 
-    public EmployeeCertificate() {}
+    public EmployeeCertificate() {
+    }
 
     public EmployeeCertificate(Employee employee, String certificateName, LocalDate issueDate, LocalDate expiryDate, String issuedBy) {
         this.employee = employee;
@@ -38,7 +39,6 @@ public class EmployeeCertificate {
         this.issuedBy = issuedBy;
     }
 
-    // Gettery i settery
     public Long getId() {
         return id;
     }

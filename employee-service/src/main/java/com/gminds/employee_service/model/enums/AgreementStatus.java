@@ -10,6 +10,7 @@ public enum AgreementStatus {
     private AgreementStatus(String s) {
         name = s;
     }
+
     public String toString() {
         return this.name;
     }

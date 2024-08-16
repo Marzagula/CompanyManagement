@@ -6,13 +6,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(uses = {JobMapper.class, EmployeeAgreementMapper.class, EmployeeCertificateMapper.class, EmploymentHistoryMapper.class, DepartmentMapper.class})
 public interface EmployeeMapper {
     EmployeeMapper INSTANCE = Mappers.getMapper(EmployeeMapper.class);
 
-    @Mapping(target = "id", source = "employee.id")
+    @Mapping(source = "job.department.id", target = "job.departmentId")
     EmployeeDTO toEmployeeDTO(Employee employee);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "job.departmentId", target = "job.department.id")
     Employee toEmployee(EmployeeDTO employeeDTO);
 }

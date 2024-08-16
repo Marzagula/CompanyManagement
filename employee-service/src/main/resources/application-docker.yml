@@ -29,6 +29,7 @@ spring:
 logging:
   level:
     org.springframework.security: DEBUG
+    com.gminds.employee_service: DEBUG
 rsa:
   public-key: classpath:certs/public_key.pem
 server:

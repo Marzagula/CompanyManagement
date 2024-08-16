@@ -10,8 +10,10 @@ import org.mapstruct.factory.Mappers;
 public interface JobMapper {
     JobMapper INSTANCE = Mappers.getMapper(JobMapper.class);
 
+    @Mapping(source = "department.id", target = "departmentId")
     JobDTO toJobDTO(Job job);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "departmentId", target = "department.id")
     Job toJob(JobDTO jobDTO);
 }
+

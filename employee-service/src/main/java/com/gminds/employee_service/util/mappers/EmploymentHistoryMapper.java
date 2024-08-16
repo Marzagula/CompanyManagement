@@ -10,7 +10,7 @@ import org.mapstruct.factory.Mappers;
 public interface EmploymentHistoryMapper {
     EmploymentHistoryMapper INSTANCE = Mappers.getMapper(EmploymentHistoryMapper.class);
 
-
+    @Mapping(source = "employee.id", target = "employeeId")
     EmploymentHistoryDTO toEmploymentHistoryDTO(EmploymentHistory employmentHistory);
 
     @Mapping(target = "employee", ignore = true)

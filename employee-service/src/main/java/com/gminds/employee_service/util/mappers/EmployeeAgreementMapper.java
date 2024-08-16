@@ -10,8 +10,9 @@ import org.mapstruct.factory.Mappers;
 public interface EmployeeAgreementMapper {
     EmployeeAgreementMapper INSTANCE = Mappers.getMapper(EmployeeAgreementMapper.class);
 
+    @Mapping(source = "employee.id", target = "employeeId")
     EmployeeAgreementDTO toEmployeeAgreementDTO(EmployeeAgreement employeeAgreement);
 
-    @Mapping(target = "employee", ignore = true)
+    @Mapping(source = "employeeId", target = "employee.id")
     EmployeeAgreement toEmployeeAgreement(EmployeeAgreementDTO employeeAgreementDTO);
 }

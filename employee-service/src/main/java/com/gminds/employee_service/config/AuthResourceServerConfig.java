@@ -14,9 +14,10 @@ public class AuthResourceServerConfig {
 
     private final RsaKeyProperties rsaKeys;
 
-    AuthResourceServerConfig(RsaKeyProperties rsaKeyProperties){
+    AuthResourceServerConfig(RsaKeyProperties rsaKeyProperties) {
         this.rsaKeys = rsaKeyProperties;
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
