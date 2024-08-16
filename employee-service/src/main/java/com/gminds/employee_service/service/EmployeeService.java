@@ -4,7 +4,7 @@ import com.gminds.employee_service.exceptions.ResourceNotFoundException;
 import com.gminds.employee_service.model.Employee;
 import com.gminds.employee_service.model.dtos.EmployeeDTO;
 import com.gminds.employee_service.repository.EmployeeRepository;
-import com.gminds.employee_service.service.validation.DatesValidator;
+import com.gminds.employee_service.service.validation.DateValidatorImpl;
 import com.gminds.employee_service.util.mappers.EmployeeMapper;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -18,9 +18,9 @@ public class EmployeeService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
     private final EmployeeRepository employeeRepository;
-    private final DatesValidator datesValidator;
+    private final DateValidatorImpl datesValidator;
 
-    public EmployeeService(EmployeeRepository employeeRepository, DatesValidator datesValidator) {
+    public EmployeeService(EmployeeRepository employeeRepository, DateValidatorImpl datesValidator) {
         this.employeeRepository = employeeRepository;
         this.datesValidator = datesValidator;
     }
