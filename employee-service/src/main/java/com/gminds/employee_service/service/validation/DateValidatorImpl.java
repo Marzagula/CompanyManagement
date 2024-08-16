@@ -1,10 +1,12 @@
 package com.gminds.employee_service.service.validation;
 
 import com.gminds.employee_service.model.dtos.EmployeeAgreementDTO;
+import org.springframework.stereotype.Service;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
 
+@Service
 public class DateValidatorImpl implements DateValidator<EmployeeAgreementDTO> {
 
 
