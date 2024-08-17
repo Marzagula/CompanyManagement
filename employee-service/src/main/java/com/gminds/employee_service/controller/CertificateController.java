@@ -1,7 +1,7 @@
 package com.gminds.employee_service.controller;
 
 import com.gminds.employee_service.model.dtos.EmployeeCertificateDTO;
-import com.gminds.employee_service.service.CertificateService;
+import com.gminds.employee_service.service.DefaultCertificateService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/employees")
 public class CertificateController {
-    private final CertificateService certificateService;
+    private final DefaultCertificateService certificateService;
 
-    public CertificateController(CertificateService certificateService) {
+    public CertificateController(DefaultCertificateService certificateService) {
         this.certificateService = certificateService;
     }
 

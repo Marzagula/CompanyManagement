@@ -7,7 +7,7 @@ public enum AgreementStatus {
 
     private final String name;
 
-    private AgreementStatus(String s) {
+    AgreementStatus(String s) {
         name = s;
     }
 

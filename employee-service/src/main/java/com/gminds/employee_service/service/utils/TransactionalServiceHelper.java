@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 @Service
 public class TransactionalServiceHelper {
-    
+
     public <T> T executeInTransaction(Supplier<T> action) {
         try {
             return action.get();

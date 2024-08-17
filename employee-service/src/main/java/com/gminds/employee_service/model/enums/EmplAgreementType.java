@@ -6,7 +6,7 @@ public enum EmplAgreementType {
 
     private final String name;
 
-    private EmplAgreementType(String s) {
+    EmplAgreementType(String s) {
         name = s;
     }
 

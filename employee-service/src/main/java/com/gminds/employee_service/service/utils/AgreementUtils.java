@@ -16,6 +16,7 @@ import java.util.Comparator;
 @Service
 public class AgreementUtils {
     private static final Logger logger = LoggerFactory.getLogger(AgreementUtils.class);
+
     /**
      * Finds the last active employee agreement based on the latest fromDate.
      * <p>

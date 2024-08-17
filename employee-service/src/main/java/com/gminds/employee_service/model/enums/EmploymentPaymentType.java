@@ -5,7 +5,7 @@ public enum EmploymentPaymentType {
 
     private final String name;
 
-    private EmploymentPaymentType(String s) {
+    EmploymentPaymentType(String s) {
         name = s;
     }
 

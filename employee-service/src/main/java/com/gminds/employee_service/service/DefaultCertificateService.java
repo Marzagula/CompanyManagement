@@ -6,8 +6,8 @@ import com.gminds.employee_service.model.Employee;
 import com.gminds.employee_service.model.EmployeeCertificate;
 import com.gminds.employee_service.model.dtos.EmployeeCertificateDTO;
 import com.gminds.employee_service.repository.EmployeeRepository;
-import com.gminds.employee_service.service.validation.DateValidatorImpl;
 import com.gminds.employee_service.service.utils.mappers.EmployeeCertificateMapper;
+import com.gminds.employee_service.service.validation.DateValidatorImpl;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public class DefaultCertificateService implements CertificateService {
     @Transactional
     @Override
     public void addCertificateToEmployee(Long id, EmployeeCertificateDTO certificateDTO) {
-        addValidatedCertificate(getEmployeeById(id),certificateDTO);
+        addValidatedCertificate(getEmployeeById(id), certificateDTO);
     }
 
     @Override
