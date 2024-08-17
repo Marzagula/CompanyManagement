@@ -46,6 +46,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(TransactionException.class)
+    public ResponseEntity<ErrorResponse> handleTransactionException(TransactionException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("TRANSACTION_ERROR", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(DataValidationException.class)
+    public ResponseEntity<ErrorResponse> handleDataValidationException(DataValidationException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("VALIDATION_ERROR", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex) {
         logger.error("Unexpected error occurred", ex);
