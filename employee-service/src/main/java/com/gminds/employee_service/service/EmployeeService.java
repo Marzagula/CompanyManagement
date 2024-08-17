@@ -5,7 +5,7 @@ import com.gminds.employee_service.model.Employee;
 import com.gminds.employee_service.model.dtos.EmployeeDTO;
 import com.gminds.employee_service.repository.EmployeeRepository;
 import com.gminds.employee_service.service.validation.DateValidatorImpl;
-import com.gminds.employee_service.util.mappers.EmployeeMapper;
+import com.gminds.employee_service.service.utils.mappers.EmployeeMapper;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,14 +58,8 @@ public class EmployeeService {
      * @param employee is employee whose collections are validated.
      */
     private void validateEmployeeCollectionsDates(Employee employee) {
-        employee.getEmploymentHistory().forEach(eH -> {
-            datesValidator.validateIfEarlierIsBeforeLater(eH.getFromDate(), eH.getToDate());
-        });
-        employee.getAgreements().forEach(agr -> {
-            datesValidator.validateIfEarlierIsBeforeLater(agr.getFromDate(), agr.getToDate());
-        });
-        employee.getCertificates().forEach(cert -> {
-            datesValidator.validateIfEarlierIsBeforeLater(cert.getIssueDate(), cert.getExpiryDate());
-        });
+        employee.getEmploymentHistory().forEach(eH -> datesValidator.validateIfEarlierIsBeforeLater(eH.getFromDate(), eH.getToDate()));
+        employee.getAgreements().forEach(agr -> datesValidator.validateIfEarlierIsBeforeLater(agr.getFromDate(), agr.getToDate()));
+        employee.getCertificates().forEach(cert -> datesValidator.validateIfEarlierIsBeforeLater(cert.getIssueDate(), cert.getExpiryDate()));
     }
 }

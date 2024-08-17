@@ -1,4 +1,4 @@
-package com.gminds.employee_service.util.mappers;
+package com.gminds.employee_service.service.utils.mappers;
 
 import com.gminds.employee_service.model.Employee;
 import com.gminds.employee_service.model.dtos.EmployeeDTO;
