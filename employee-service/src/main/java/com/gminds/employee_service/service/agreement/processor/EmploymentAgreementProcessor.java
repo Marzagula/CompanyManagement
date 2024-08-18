@@ -1,7 +1,9 @@
 package com.gminds.employee_service.service.agreement.processor;
 
 import com.gminds.employee_service.exceptions.EmployeeAgreementException;
+import com.gminds.employee_service.model.Employee;
 import com.gminds.employee_service.model.EmployeeAgreement;
+import com.gminds.employee_service.model.enums.EmplAgreementType;
 import com.gminds.employee_service.service.agreement.AgreementManagementService;
 import com.gminds.employee_service.service.agreement.validator.AgreementValidator;
 import org.slf4j.Logger;
@@ -21,9 +23,17 @@ public class EmploymentAgreementProcessor implements AgreementProcessor {
     }
 
     @Override
-    public void process(EmployeeAgreement agreement) throws EmployeeAgreementException {
-        // Specyficzna logika dla umów o pracę
+    public EmployeeAgreement process(EmployeeAgreement agreement) throws EmployeeAgreementException {
+        /**TODO pełna logika dla umów o pracę*/
+        Employee employee = agreement.getEmployee();
+        EmployeeAgreement newAgreement = agreementManagementService.createAndAddNewAgreement(employee, agreement);
+        agreementManagementService.closePreviousAgreement(agreementManagementService.findLastActiveAgreement(employee), agreement.getFromDate());
+        agreementValidator.validateAgreement(newAgreement);
+        return newAgreement;
+    }
 
-        agreementValidator.validateAgreement(agreement);
+    @Override
+    public EmplAgreementType getType() {
+        return EmplAgreementType.EMPLOYMENT;
     }
 }

@@ -5,7 +5,6 @@ import com.gminds.employee_service.exceptions.ResourceNotFoundException;
 import com.gminds.employee_service.model.Employee;
 import com.gminds.employee_service.model.EmployeeAgreement;
 import com.gminds.employee_service.model.dtos.EmployeeAgreementDTO;
-import com.gminds.employee_service.repository.EmployeeAgreementRepository;
 import com.gminds.employee_service.repository.EmployeeRepository;
 import com.gminds.employee_service.service.agreement.factory.AgreementProcessorFactory;
 import com.gminds.employee_service.service.agreement.processor.AgreementProcessor;
@@ -34,26 +33,20 @@ public class DefaultAgreementService implements AgreementService{
     public EmployeeAgreementDTO newAgreement(Long employeeId, EmployeeAgreementDTO agreementDTO) {
         return transactionHelper.executeInTransaction(() -> {
             Employee employee = employeeRepository.findById(employeeId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
-
-            EmployeeAgreement newAgreement = createAgreement(employee, agreementDTO);
-
+                    .orElseThrow(() -> new ResourceNotFoundException("Employee with id "+employeeId+" not found"));
+            EmployeeAgreement newAgreement = prepareAgreement(employee, agreementDTO);
             AgreementProcessor processor = agreementProcessorFactory.getProcessor(newAgreement.getAgreementType());
-
             try {
                 processor.process(newAgreement);
             } catch (EmployeeAgreementException e) {
                 throw new RuntimeException(e);
             }
 
-            employee.getAgreements().add(newAgreement);
-            employeeRepository.save(employee);
-
             return EmployeeAgreementMapper.INSTANCE.toEmployeeAgreementDTO(newAgreement);
         });
     }
 
-    private EmployeeAgreement createAgreement(Employee employee, EmployeeAgreementDTO agreementDTO) {
+    private EmployeeAgreement prepareAgreement(Employee employee, EmployeeAgreementDTO agreementDTO) {
         EmployeeAgreement agreement = EmployeeAgreementMapper.INSTANCE.toEmployeeAgreement(agreementDTO);
         agreement.setEmployee(employee);
         return agreement;

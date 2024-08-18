@@ -9,22 +9,29 @@ import com.gminds.employee_service.service.agreement.validator.AgreementValidato
 import com.gminds.employee_service.service.agreement.processor.EmploymentAgreementProcessor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 @Component
 public class AgreementProcessorFactory {
 
     private final AgreementValidator agreementValidator;
     private final AgreementManagementService agreementManagementService;
+    private final Map<EmplAgreementType, AgreementProcessor> processorMap;
 
-    public AgreementProcessorFactory(AgreementValidator agreementValidator,
+    public AgreementProcessorFactory(List<AgreementProcessor> processors,
+                                     AgreementValidator agreementValidator,
                                      AgreementManagementService agreementManagementService) {
+        this.processorMap = processors.stream()
+                .collect(Collectors.toMap(AgreementProcessor::getType, Function.identity()));
+
         this.agreementValidator = agreementValidator;
         this.agreementManagementService = agreementManagementService;
     }
 
     public AgreementProcessor getProcessor(EmplAgreementType agreementType) {
-        return switch (agreementType) {
-            case B2B -> new B2BAgreementProcessor(agreementValidator,agreementManagementService);
-            case EMPLOYMENT -> new EmploymentAgreementProcessor(agreementValidator,agreementManagementService);
-        };
+        return processorMap.get(agreementType);
     }
 }

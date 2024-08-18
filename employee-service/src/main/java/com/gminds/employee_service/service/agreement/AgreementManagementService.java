@@ -5,6 +5,8 @@ import com.gminds.employee_service.model.Employee;
 import com.gminds.employee_service.model.EmployeeAgreement;
 import com.gminds.employee_service.model.enums.AgreementStatus;
 import com.gminds.employee_service.repository.EmployeeAgreementRepository;
+import com.gminds.employee_service.repository.EmployeeRepository;
+import com.gminds.employee_service.service.utils.TransactionHelper;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,16 +20,29 @@ public class AgreementManagementService {
 
     private static final Logger logger = LoggerFactory.getLogger(AgreementManagementService.class);
     private final EmployeeAgreementRepository employeeAgreementRepository;
+    private final EmployeeRepository employeeRepository;
+    private final TransactionHelper transactionHelper;
 
-    public AgreementManagementService(EmployeeAgreementRepository employeeAgreementRepository) {
+    public AgreementManagementService(EmployeeAgreementRepository employeeAgreementRepository,
+                                      TransactionHelper transactionHelper,
+                                      EmployeeRepository employeeRepository) {
         this.employeeAgreementRepository = employeeAgreementRepository;
+        this.transactionHelper = transactionHelper;
+        this.employeeRepository = employeeRepository;
     }
 
     public EmployeeAgreement createAndAddNewAgreement(Employee employee, EmployeeAgreement newAgreement) {
         employee.getAgreements().add(newAgreement);
         newAgreement.setEmployee(employee);
         newAgreement.setStatus(determineAgreementStatus(newAgreement));
-        return newAgreement;
+        employee.getAgreements().add(newAgreement);
+
+        return transactionHelper.executeInTransaction(() ->
+                employeeRepository.save(employee)
+                .getAgreements()
+                        .stream()
+                        .max(Comparator.comparing(EmployeeAgreement::getId))
+                        .orElseThrow());
     }
 
     /**
@@ -47,9 +62,10 @@ public class AgreementManagementService {
         if (!lastAgreement.getToDate().isAfter(LocalDate.now())) {
             lastAgreement.setStatus(AgreementStatus.FINISHED);
         }
-
-        employeeAgreementRepository.saveAndFlush(lastAgreement);
-
+        transactionHelper.executeInTransaction(() -> {
+            employeeAgreementRepository.saveAndFlush(lastAgreement);
+            return null;
+        });
 
     }
 

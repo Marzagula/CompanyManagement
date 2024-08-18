@@ -5,7 +5,9 @@ import com.gminds.employee_service.exceptions.ResourceNotFoundException;
 import com.gminds.employee_service.model.Employee;
 import com.gminds.employee_service.model.dtos.EmployeeDTO;
 import com.gminds.employee_service.repository.EmployeeRepository;
-import com.gminds.employee_service.service.agreement.validator.AgreementValidatorService;
+import com.gminds.employee_service.service.agreement.AgreementManagementService;
+import com.gminds.employee_service.service.agreement.validator.AgreementValidator;
+import com.gminds.employee_service.service.employee.validator.EmployeeValidator;
 import com.gminds.employee_service.service.utils.mappers.EmployeeMapper;
 import com.gminds.employee_service.service.utils.validator.DateValidator;
 import jakarta.transaction.Transactional;
@@ -20,14 +22,16 @@ public class EmployeeService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
     private final EmployeeRepository employeeRepository;
+    private final EmployeeValidator employeeValidator;
 
-    private final AgreementValidatorService agreementValidatorService;
+    private final AgreementManagementService agreementManagementService;
 
-    public EmployeeService(EmployeeRepository employeeRepository,
-                           AgreementValidatorService agreementValidatorService) {
+    public EmployeeService(EmployeeValidator employeeValidator,
+                           EmployeeRepository employeeRepository,
+                           AgreementManagementService agreementManagementService) {
         this.employeeRepository = employeeRepository;
-
-        this.agreementValidatorService = agreementValidatorService;
+        this.agreementManagementService = agreementManagementService;
+        this.employeeValidator = employeeValidator;
     }
 
     public Page<EmployeeDTO> findAllEmployees(Pageable pageable) {
@@ -39,9 +43,12 @@ public class EmployeeService {
         Employee newEmployee = EmployeeMapper.INSTANCE.toEmployee(employeeDTO);
 
         newEmployee.getCertificates().forEach(cert -> cert.setEmployee(newEmployee));
-        newEmployee.getAgreements().forEach(agr -> agr.setEmployee(newEmployee));
+        newEmployee.getAgreements().forEach(agr -> {
+            agr.setEmployee(newEmployee);
+            agr.setStatus(agreementManagementService.determineAgreementStatus(agr));
+        });
         newEmployee.getEmploymentHistory().forEach(hist -> hist.setEmployee(newEmployee));
-        validateEmployeeCollectionsDates(newEmployee);
+        employeeValidator.validate(newEmployee);
 
         employeeRepository.saveAndFlush(newEmployee);
     }
@@ -63,21 +70,4 @@ public class EmployeeService {
         return EmployeeMapper.INSTANCE.toEmployeeDTO(employee);
     }
 
-    /**
-     * Check that employment history, contracts, and certifications of employee have logically correct dates.
-     *
-     * @param employee is employee whose collections are validated.
-     */
-    /*TODO przeniesc validacje do osobnej klasy zajmujacej sie tylko tym**/
-    private void validateEmployeeCollectionsDates(Employee employee){
-        employee.getEmploymentHistory().forEach(eH -> DateValidator.validateIfEarlierIsBeforeLater(eH.getFromDate(), eH.getToDate()));
-        employee.getAgreements().forEach(agr -> {
-            try {
-                agreementValidatorService.validateAgreement(agr);
-            } catch (EmployeeAgreementException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        employee.getCertificates().forEach(cert -> DateValidator.validateIfEarlierIsBeforeLater(cert.getIssueDate(), cert.getExpiryDate()));
-    }
 }
