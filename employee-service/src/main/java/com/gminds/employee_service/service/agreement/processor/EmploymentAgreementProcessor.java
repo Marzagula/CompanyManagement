@@ -27,7 +27,7 @@ public class EmploymentAgreementProcessor implements AgreementProcessor {
         /**TODO pełna logika dla umów o pracę*/
         Employee employee = agreement.getEmployee();
         EmployeeAgreement newAgreement = agreementManagementService.createAndAddNewAgreement(employee, agreement);
-        agreementManagementService.closePreviousAgreement(agreementManagementService.findLastActiveAgreement(employee), agreement.getFromDate());
+        agreementManagementService.closePreviousAgreement(agreementManagementService.findMostRecentActiveAgreement(employee), agreement.getFromDate());
         agreementValidator.validateAgreement(newAgreement);
         return newAgreement;
     }

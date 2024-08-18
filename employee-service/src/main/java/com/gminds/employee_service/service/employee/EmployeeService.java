@@ -31,12 +31,12 @@ public class EmployeeService {
         this.employeeValidator = employeeValidator;
     }
 
-    public Page<EmployeeDTO> findAllEmployees(Pageable pageable) {
+    public Page<EmployeeDTO> findAllEmployeesPaginated(Pageable pageable) {
         return employeeRepository.findAll(pageable).map(EmployeeMapper.INSTANCE::toEmployeeDTO);
     }
 
     @Transactional
-    public void addEmployee(EmployeeDTO employeeDTO) {
+    public void createEmployee(EmployeeDTO employeeDTO) {
         Employee newEmployee = EmployeeMapper.INSTANCE.toEmployee(employeeDTO);
 
         newEmployee.getCertificates().forEach(cert -> cert.setEmployee(newEmployee));

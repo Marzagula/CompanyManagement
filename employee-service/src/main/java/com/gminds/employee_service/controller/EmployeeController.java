@@ -30,12 +30,12 @@ public class EmployeeController {
     @GetMapping
     ResponseEntity<Page<EmployeeDTO>> getAllEmployees(@RequestParam(defaultValue = "0") int page,
                                                       @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(employeeService.findAllEmployees(PageRequest.of(page, size)));
+        return ResponseEntity.ok(employeeService.findAllEmployeesPaginated(PageRequest.of(page, size)));
     }
 
     @PostMapping
     ResponseEntity<String> addEmployee(@RequestBody @Valid EmployeeDTO employeeDTO) throws EmployeeAgreementException {
-        employeeService.addEmployee(employeeDTO);
+        employeeService.createEmployee(employeeDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(employeeDTO.name() + " is hired.");
     }
 

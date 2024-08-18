@@ -25,7 +25,7 @@ public class B2BAgreementProcessor implements AgreementProcessor {
         /**TODO pełna logika dla umów B2B*/
         Employee employee = agreement.getEmployee();
         EmployeeAgreement newAgreement = agreementManagementService.createAndAddNewAgreement(employee, agreement);
-        agreementManagementService.closePreviousAgreement(agreementManagementService.findLastActiveAgreement(employee), agreement.getFromDate());
+        agreementManagementService.closePreviousAgreement(agreementManagementService.findMostRecentActiveAgreement(employee), agreement.getFromDate());
         agreementValidator.validateAgreement(newAgreement);
         return newAgreement;
     }

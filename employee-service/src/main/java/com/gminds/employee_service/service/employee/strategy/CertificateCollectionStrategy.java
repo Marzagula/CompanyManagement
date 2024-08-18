@@ -1,4 +1,4 @@
-package com.gminds.employee_service.service.agreement.strategy;
+package com.gminds.employee_service.service.employee.strategy;
 
 import com.gminds.employee_service.model.Employee;
 import com.gminds.employee_service.model.EmployeeCertificate;

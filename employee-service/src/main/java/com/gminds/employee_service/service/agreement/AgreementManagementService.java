@@ -81,7 +81,7 @@ public class AgreementManagementService {
      * @return the employee's last active agreement
      * @throws ResourceNotFoundException if no active agreement is found
      */
-    public EmployeeAgreement findLastActiveAgreement(Employee employee) {
+    public EmployeeAgreement findMostRecentActiveAgreement(Employee employee) {
         return employee.getAgreements()
                 .stream()
                 .filter(agreement -> agreement.getStatus() == AgreementStatus.ACTIVE)
