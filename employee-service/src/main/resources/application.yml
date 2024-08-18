@@ -4,7 +4,7 @@ spring:
   application:
     name: employee-server
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5433/postgres
     username: postgres
     password: marcin123
     hikari:
@@ -30,6 +30,10 @@ rsa:
   public-key: classpath:certs/public_key.pem
 server:
   port: 8082
+
+cache:
+  refresh:
+    interval: 3600000 #1h
 
 eureka:
   hostname: http://localhost:8761

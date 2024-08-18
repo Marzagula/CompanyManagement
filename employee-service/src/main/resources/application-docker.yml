@@ -35,6 +35,10 @@ rsa:
 server:
   port: 8082
 
+cache:
+  refresh:
+    interval: 3600000 #1h
+
 eureka:
   hostname: http://eureka-server:8761
   client:

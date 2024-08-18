@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-public class EmployeeAgreement {
+public class EmployeeAgreement extends Auditable<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
