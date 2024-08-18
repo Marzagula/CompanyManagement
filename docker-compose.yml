@@ -50,6 +50,19 @@ services:
       - employee_db_data:/var/lib/postgresql/data
       - ./database/employee/:/docker-entrypoint-initdb.d/
 
+
+  test-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: marcin123
+    ports:
+      - "5434:5432"
+    volumes:
+      - test_db_data:/var/lib/postgresql/data
+      - ./database/employee/:/docker-entrypoint-initdb.d/employee
+
 volumes:
   auth_db_data:
   employee_db_data:
+  test_db_data:
