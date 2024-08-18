@@ -1,6 +1,6 @@
 package com.gminds.employee_service.exceptions;
 
-import com.gminds.employee_service.service.EmployeeService;
+import com.gminds.employee_service.service.employee.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

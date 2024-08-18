@@ -1,4 +1,4 @@
-package com.gminds.employee_service.service;
+package com.gminds.employee_service.service.employee;
 
 import com.gminds.employee_service.exceptions.ResourceNotFoundException;
 import com.gminds.employee_service.model.Employee;
@@ -6,6 +6,7 @@ import com.gminds.employee_service.model.Job;
 import com.gminds.employee_service.model.dtos.JobDTO;
 import com.gminds.employee_service.repository.EmployeeRepository;
 import com.gminds.employee_service.repository.JobRepository;
+import com.gminds.employee_service.service.utils.EmployeeProperty;
 import com.gminds.employee_service.service.utils.mappers.JobMapper;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;

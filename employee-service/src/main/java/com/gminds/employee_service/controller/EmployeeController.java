@@ -1,7 +1,9 @@
 package com.gminds.employee_service.controller;
 
+import com.gminds.employee_service.exceptions.EmployeeAgreementException;
 import com.gminds.employee_service.model.dtos.EmployeeDTO;
-import com.gminds.employee_service.service.EmployeeService;
+import com.gminds.employee_service.service.employee.EmployeeService;
+import com.gminds.employee_service.service.utils.mappers.EmployeeMapper;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,14 +22,19 @@ public class EmployeeController {
 
     }
 
+    @GetMapping("/{id}")
+    ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long id){
+        return ResponseEntity.ok(EmployeeMapper.INSTANCE.toEmployeeDTO(employeeService.findEmployeeById(id)));
+    }
+
     @GetMapping
-    ResponseEntity<Page<EmployeeDTO>> findAllUsers(@RequestParam(defaultValue = "0") int page,
-                                                   @RequestParam(defaultValue = "10") int size) {
+    ResponseEntity<Page<EmployeeDTO>> getAllEmployees(@RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(employeeService.findAllEmployees(PageRequest.of(page, size)));
     }
 
     @PostMapping
-    ResponseEntity<String> addEmployee(@RequestBody @Valid EmployeeDTO employeeDTO) {
+    ResponseEntity<String> addEmployee(@RequestBody @Valid EmployeeDTO employeeDTO) throws EmployeeAgreementException {
         employeeService.addEmployee(employeeDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(employeeDTO.name() + " is hired.");
     }

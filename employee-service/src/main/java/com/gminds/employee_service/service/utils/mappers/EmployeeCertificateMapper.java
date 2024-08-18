@@ -13,6 +13,6 @@ public interface EmployeeCertificateMapper {
     @Mapping(source = "employee.id", target = "employeeId")
     EmployeeCertificateDTO toEmployeeCertificateDTO(EmployeeCertificate employeeCertificate);
 
-    @Mapping(target = "employee", ignore = true)
+    @Mapping(source = "employeeId", target = "employee.id")
     EmployeeCertificate toEmployeeCertificate(EmployeeCertificateDTO employeeCertificateDTO);
 }

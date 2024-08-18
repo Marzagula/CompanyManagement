@@ -1,4 +1,4 @@
-package com.gminds.employee_service.service;
+package com.gminds.employee_service.service.utils;
 
 import com.gminds.employee_service.model.Employee;
 

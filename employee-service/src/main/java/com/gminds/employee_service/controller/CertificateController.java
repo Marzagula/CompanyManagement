@@ -1,7 +1,7 @@
 package com.gminds.employee_service.controller;
 
 import com.gminds.employee_service.model.dtos.EmployeeCertificateDTO;
-import com.gminds.employee_service.service.DefaultCertificateService;
+import com.gminds.employee_service.service.employee.DefaultCertificateService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

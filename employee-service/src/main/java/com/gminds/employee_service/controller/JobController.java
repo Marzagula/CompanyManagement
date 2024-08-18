@@ -3,7 +3,7 @@ package com.gminds.employee_service.controller;
 import com.gminds.employee_service.exceptions.EmployeeAgreementException;
 import com.gminds.employee_service.exceptions.ResourceNotFoundException;
 import com.gminds.employee_service.model.dtos.JobDTO;
-import com.gminds.employee_service.service.JobService;
+import com.gminds.employee_service.service.employee.JobService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

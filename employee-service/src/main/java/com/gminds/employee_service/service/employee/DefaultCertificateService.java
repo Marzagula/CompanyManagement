@@ -1,4 +1,4 @@
-package com.gminds.employee_service.service;
+package com.gminds.employee_service.service.employee;
 
 import com.gminds.employee_service.exceptions.DataValidationException;
 import com.gminds.employee_service.exceptions.ResourceNotFoundException;
@@ -7,7 +7,7 @@ import com.gminds.employee_service.model.EmployeeCertificate;
 import com.gminds.employee_service.model.dtos.EmployeeCertificateDTO;
 import com.gminds.employee_service.repository.EmployeeRepository;
 import com.gminds.employee_service.service.utils.mappers.EmployeeCertificateMapper;
-import com.gminds.employee_service.service.validation.DateValidatorImpl;
+import com.gminds.employee_service.service.utils.validator.DateValidator;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +22,9 @@ public class DefaultCertificateService implements CertificateService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultCertificateService.class);
     private final EmployeeRepository repository;
-    private final DateValidatorImpl datesValidator;
 
-    public DefaultCertificateService(EmployeeRepository repository,
-                                     DateValidatorImpl datesValidator) {
+    public DefaultCertificateService(EmployeeRepository repository) {
         this.repository = repository;
-        this.datesValidator = datesValidator;
     }
 
     @Transactional
@@ -47,7 +44,7 @@ public class DefaultCertificateService implements CertificateService {
 
     protected void addValidatedCertificate(Employee employee, EmployeeCertificateDTO certificateDTO) {
         try {
-            datesValidator.validateIfEarlierIsBeforeLater(certificateDTO.issueDate(), certificateDTO.expiryDate());
+            DateValidator.validateIfEarlierIsBeforeLater(certificateDTO.issueDate(), certificateDTO.expiryDate());
         } catch (DateTimeException e) {
             throw new DataValidationException("Invalid certificate date range: " + certificateDTO.issueDate() + " - " + certificateDTO.expiryDate(), e);
         }

@@ -2,7 +2,7 @@ package com.gminds.employee_service.controller;
 
 import com.gminds.employee_service.exceptions.EmployeeAgreementException;
 import com.gminds.employee_service.model.dtos.EmployeeAgreementDTO;
-import com.gminds.employee_service.service.AgreementService;
+import com.gminds.employee_service.service.agreement.AgreementService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +21,6 @@ public class AgreementController {
     public ResponseEntity<EmployeeAgreementDTO> newAgreement(@PathVariable Long id, @RequestBody @Valid EmployeeAgreementDTO employeeAgreement) throws EmployeeAgreementException {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(this.agreementService
-                        .terminatePreviousAndAddNewAgreement(id, employeeAgreement));
+                        .newAgreement(id, employeeAgreement));
     }
 }

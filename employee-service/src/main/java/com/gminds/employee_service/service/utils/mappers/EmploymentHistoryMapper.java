@@ -13,6 +13,6 @@ public interface EmploymentHistoryMapper {
     @Mapping(source = "employee.id", target = "employeeId")
     EmploymentHistoryDTO toEmploymentHistoryDTO(EmploymentHistory employmentHistory);
 
-    @Mapping(target = "employee", ignore = true)
+    @Mapping(source = "employeeId", target = "employee.id")
     EmploymentHistory toEmploymentHistory(EmploymentHistoryDTO employmentHistoryDTO);
 }
