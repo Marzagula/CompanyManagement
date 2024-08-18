@@ -35,19 +35,19 @@ public class EmployeeService {
         return employeeRepository.findAll(pageable).map(EmployeeMapper.INSTANCE::toEmployeeDTO);
     }
 
-    @Transactional
-    public void createEmployee(EmployeeDTO employeeDTO) {
+
+    public EmployeeDTO createEmployee(EmployeeDTO employeeDTO) {
         Employee newEmployee = EmployeeMapper.INSTANCE.toEmployee(employeeDTO);
 
-        newEmployee.getCertificates().forEach(cert -> cert.setEmployee(newEmployee));
+        if(newEmployee.getCertificates() != null)
+            newEmployee.getCertificates().forEach(cert -> cert.setEmployee(newEmployee));
         newEmployee.getAgreements().forEach(agr -> {
             agr.setEmployee(newEmployee);
             agr.setStatus(agreementManagementService.determineAgreementStatus(agr));
         });
         newEmployee.getEmploymentHistory().forEach(hist -> hist.setEmployee(newEmployee));
         employeeValidator.validate(newEmployee);
-
-        employeeRepository.saveAndFlush(newEmployee);
+        return EmployeeMapper.INSTANCE.toEmployeeDTO(employeeRepository.saveAndFlush(newEmployee));
     }
 
 
@@ -60,8 +60,8 @@ public class EmployeeService {
     }
 
     @Transactional
-    public EmployeeDTO updatePersonalInformation(EmployeeDTO employeeDTO) {
-        Employee employee = findEmployeeById(employeeDTO.id());
+    public EmployeeDTO updatePersonalInformation(Long id, EmployeeDTO employeeDTO) {
+        Employee employee = findEmployeeById(id);
         employee.setName(employeeDTO.name());
         employee.setSurname(employeeDTO.surname());
         return EmployeeMapper.INSTANCE.toEmployeeDTO(employee);

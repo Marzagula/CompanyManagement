@@ -35,6 +35,12 @@ cache:
   refresh:
     interval: 3600000 #1h
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
 eureka:
   hostname: http://localhost:8761
   client:

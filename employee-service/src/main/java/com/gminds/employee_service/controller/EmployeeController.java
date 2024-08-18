@@ -1,6 +1,5 @@
 package com.gminds.employee_service.controller;
 
-import com.gminds.employee_service.exceptions.EmployeeAgreementException;
 import com.gminds.employee_service.model.dtos.EmployeeDTO;
 import com.gminds.employee_service.service.employee.EmployeeService;
 import com.gminds.employee_service.service.utils.mappers.EmployeeMapper;
@@ -34,13 +33,12 @@ public class EmployeeController {
     }
 
     @PostMapping
-    ResponseEntity<String> addEmployee(@RequestBody @Valid EmployeeDTO employeeDTO) throws EmployeeAgreementException {
-        employeeService.createEmployee(employeeDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(employeeDTO.name() + " is hired.");
+    ResponseEntity<EmployeeDTO> createEmployee(@RequestBody @Valid EmployeeDTO employeeDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(employeeService.createEmployee(employeeDTO));
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<EmployeeDTO> updatePersonalInformation(@RequestBody EmployeeDTO employeeDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(employeeService.updatePersonalInformation(employeeDTO));
+    ResponseEntity<EmployeeDTO> updatePersonalInformation(@PathVariable Long id, @RequestBody EmployeeDTO employeeDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(employeeService.updatePersonalInformation(id, employeeDTO));
     }
 }

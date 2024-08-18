@@ -52,12 +52,12 @@ public class AgreementValidatorService implements AgreementValidator, SalaryVali
                 .filter(pR -> pR.getJob().getId() == employeeAgreement.getEmployee().getJob().getId()
                         && pR.getEmplAgreementType() == EmplAgreementType.B2B)
                 .findFirst().orElseThrow(() -> {
-                    logger.error("Can't find B2B payment range for agreement with id: {}\n job id:{}\n agreementType:{}"
+                    logger.error("Can't find " + employeeAgreement.getAgreementType() + " payment range for agreement with id: {}\n job id:{}\n agreementType:{}"
                             , employeeAgreement.getId()
                             , employeeAgreement.getEmployee().getJob().getId()
                             , employeeAgreement.getAgreementType()
                     );
-                    return new EmployeeAgreementException("Can't find B2B payment range for agreement with id: "
+                    return new EmployeeAgreementException("Can't find " + employeeAgreement.getAgreementType() + " payment range for agreement with id: "
                             + employeeAgreement.getId()
                             + "\n job id: " + employeeAgreement.getEmployee().getJob().getId()
                             + "\n agreementType: " + employeeAgreement.getAgreementType()

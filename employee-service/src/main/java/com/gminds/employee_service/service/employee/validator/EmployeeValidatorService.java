@@ -22,7 +22,8 @@ public class EmployeeValidatorService implements EmployeeValidator {
      */
     @Override
     public void validate(Employee employee) {
-        employee.getEmploymentHistory().forEach(eH -> DateValidator.validateIfEarlierIsBeforeLater(eH.getFromDate(), eH.getToDate()));
+        if (employee.getEmploymentHistory() != null)
+            employee.getEmploymentHistory().forEach(eH -> DateValidator.validateIfEarlierIsBeforeLater(eH.getFromDate(), eH.getToDate()));
         employee.getAgreements().forEach(agr -> {
             try {
                 agreementValidator.validateAgreement(agr);
@@ -30,6 +31,7 @@ public class EmployeeValidatorService implements EmployeeValidator {
                 throw new RuntimeException(e);
             }
         });
-        employee.getCertificates().forEach(cert -> DateValidator.validateIfEarlierIsBeforeLater(cert.getIssueDate(), cert.getExpiryDate()));
+        if (employee.getCertificates() != null)
+            employee.getCertificates().forEach(cert -> DateValidator.validateIfEarlierIsBeforeLater(cert.getIssueDate(), cert.getExpiryDate()));
     }
 }

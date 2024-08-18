@@ -12,7 +12,7 @@ public record PaymentRangeDTO(
         @NotNull @Min(0) Double maxSalary,
         @NotNull Long jobId,
         @NotNull EmplAgreementType emplAgreementType,
-        @NotNull Integer year,
+        @NotNull Integer fiscalYear,
         String createdBy,
         LocalDate createdDate,
         String lastModifiedBy,

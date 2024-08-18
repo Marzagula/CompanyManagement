@@ -20,7 +20,7 @@ public class PaymentRange extends Auditable<String> {
     @Enumerated(EnumType.STRING)
     @Column(name = "employment_agreement_type")
     private EmplAgreementType emplAgreementType;
-    private Integer year;
+    private Integer fiscalYear;
 
     public Long getId() {
         return id;
@@ -62,11 +62,11 @@ public class PaymentRange extends Auditable<String> {
         this.emplAgreementType = emplAgreementType;
     }
 
-    public Integer getYear() {
-        return year;
+    public Integer getFiscalYear() {
+        return fiscalYear;
     }
 
-    public void setYear(Integer year) {
-        this.year = year;
+    public void setFiscalYear(Integer fiscalYear) {
+        this.fiscalYear = fiscalYear;
     }
 }
