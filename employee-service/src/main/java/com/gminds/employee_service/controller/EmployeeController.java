@@ -23,7 +23,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long id){
+    ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long id) {
         return ResponseEntity.ok(EmployeeMapper.INSTANCE.toEmployeeDTO(employeeService.findEmployeeById(id)));
     }
 

@@ -1,15 +1,12 @@
 package com.gminds.employee_service.service.employee;
 
-import com.gminds.employee_service.exceptions.EmployeeAgreementException;
 import com.gminds.employee_service.exceptions.ResourceNotFoundException;
 import com.gminds.employee_service.model.Employee;
 import com.gminds.employee_service.model.dtos.EmployeeDTO;
 import com.gminds.employee_service.repository.EmployeeRepository;
 import com.gminds.employee_service.service.agreement.AgreementManagementService;
-import com.gminds.employee_service.service.agreement.validator.AgreementValidator;
 import com.gminds.employee_service.service.employee.validator.EmployeeValidator;
 import com.gminds.employee_service.service.utils.mappers.EmployeeMapper;
-import com.gminds.employee_service.service.utils.validator.DateValidator;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

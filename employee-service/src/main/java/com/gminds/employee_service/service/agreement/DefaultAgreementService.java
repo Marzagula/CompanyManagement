@@ -14,7 +14,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DefaultAgreementService implements AgreementService{
+public class DefaultAgreementService implements AgreementService {
 
     private final TransactionHelper transactionHelper;
     private final AgreementProcessorFactory agreementProcessorFactory;
@@ -33,7 +33,7 @@ public class DefaultAgreementService implements AgreementService{
     public EmployeeAgreementDTO newAgreement(Long employeeId, EmployeeAgreementDTO agreementDTO) {
         return transactionHelper.executeInTransaction(() -> {
             Employee employee = employeeRepository.findById(employeeId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Employee with id "+employeeId+" not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Employee with id " + employeeId + " not found"));
             EmployeeAgreement newAgreement = prepareAgreement(employee, agreementDTO);
             AgreementProcessor processor = agreementProcessorFactory.getProcessor(newAgreement.getAgreementType());
             try {

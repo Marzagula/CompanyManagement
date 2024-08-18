@@ -1,12 +1,9 @@
 package com.gminds.employee_service.service.agreement.factory;
 
 import com.gminds.employee_service.model.enums.EmplAgreementType;
-import com.gminds.employee_service.repository.EmployeeAgreementRepository;
 import com.gminds.employee_service.service.agreement.AgreementManagementService;
 import com.gminds.employee_service.service.agreement.processor.AgreementProcessor;
-import com.gminds.employee_service.service.agreement.processor.B2BAgreementProcessor;
 import com.gminds.employee_service.service.agreement.validator.AgreementValidator;
-import com.gminds.employee_service.service.agreement.processor.EmploymentAgreementProcessor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

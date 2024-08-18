@@ -2,10 +2,11 @@ package com.gminds.employee_service.model;
 
 import com.gminds.employee_service.model.enums.EmplAgreementType;
 import jakarta.persistence.*;
-/**TODO
+
+/**
+ * TODO
  * In future entity it should be moved to accounting-service
- *
- * */
+ */
 @Entity
 public class PaymentRange extends Auditable<String> {
     @Id

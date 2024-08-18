@@ -39,7 +39,7 @@ public class AgreementManagementService {
 
         return transactionHelper.executeInTransaction(() ->
                 employeeRepository.save(employee)
-                .getAgreements()
+                        .getAgreements()
                         .stream()
                         .max(Comparator.comparing(EmployeeAgreement::getId))
                         .orElseThrow());

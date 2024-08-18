@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
 
 @Component
@@ -18,6 +19,7 @@ public class CachedPaymentRangeService {
 
     @Value("${cache.refresh.interval}")
     private Long refreshRate;
+
     public CachedPaymentRangeService(PaymentRangeRepository paymentRangeRepository) {
         this.paymentRangeRepository = paymentRangeRepository;
         init();

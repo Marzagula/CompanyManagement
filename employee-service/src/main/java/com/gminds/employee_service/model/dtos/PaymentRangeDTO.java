@@ -17,4 +17,5 @@ public record PaymentRangeDTO(
         LocalDate createdDate,
         String lastModifiedBy,
         LocalDate lastModifiedDate
-) {}
+) {
+}

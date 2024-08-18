@@ -7,9 +7,10 @@ import com.gminds.employee_service.service.utils.validator.DateValidator;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmployeeValidatorService implements EmployeeValidator{
+public class EmployeeValidatorService implements EmployeeValidator {
     private final AgreementValidator agreementValidator;
-    public EmployeeValidatorService(AgreementValidator agreementValidator){
+
+    public EmployeeValidatorService(AgreementValidator agreementValidator) {
         this.agreementValidator = agreementValidator;
     }
 

@@ -6,5 +6,6 @@ import com.gminds.employee_service.model.enums.EmplAgreementType;
 
 public interface AgreementProcessor {
     EmployeeAgreement process(EmployeeAgreement agreement) throws EmployeeAgreementException;
+
     EmplAgreementType getType();
 }

@@ -29,8 +29,8 @@ public class AgreementValidatorService implements AgreementValidator, SalaryVali
         if (employeeAgreement.getStatus() != AgreementStatus.FINISHED) {
             validateSalary(getPaymentRange(employeeAgreement), employeeAgreement.getSalary());
         }
-        logger.info("Employee Agreement with id: {}, and salary: {}",employeeAgreement.getId(),employeeAgreement.getSalary());
-        DateValidator.validateIfEarlierIsBeforeLater(employeeAgreement.getFromDate(),employeeAgreement.getToDate());
+        logger.info("Employee Agreement with id: {}, and salary: {}", employeeAgreement.getId(), employeeAgreement.getSalary());
+        DateValidator.validateIfEarlierIsBeforeLater(employeeAgreement.getFromDate(), employeeAgreement.getToDate());
     }
 
     @Override
