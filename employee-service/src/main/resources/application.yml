@@ -15,7 +15,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
+    #show-sql: true
   security:
     oauth2:
       resourceserver:
@@ -23,9 +23,9 @@ spring:
           issuer-uri: auth-server
           jwk-set-uri: ${auth-server}/jwks
 
-logging:
-  level:
-    org.springframework.security: DEBUG
+#logging:
+#  level:
+#    org.springframework.security: DEBUG
 rsa:
   public-key: classpath:certs/public_key.pem
 server:

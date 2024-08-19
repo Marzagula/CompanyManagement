@@ -39,7 +39,7 @@ public class EmployeeService {
     public EmployeeDTO createEmployee(EmployeeDTO employeeDTO) {
         Employee newEmployee = EmployeeMapper.INSTANCE.toEmployee(employeeDTO);
 
-        if(newEmployee.getCertificates() != null)
+        if (newEmployee.getCertificates() != null)
             newEmployee.getCertificates().forEach(cert -> cert.setEmployee(newEmployee));
         newEmployee.getAgreements().forEach(agr -> {
             agr.setEmployee(newEmployee);

@@ -4,7 +4,6 @@ import com.gminds.employee_service.exceptions.EmployeeAgreementException;
 import com.gminds.employee_service.model.EmployeeAgreement;
 import com.gminds.employee_service.model.PaymentRange;
 import com.gminds.employee_service.model.enums.AgreementStatus;
-import com.gminds.employee_service.model.enums.EmplAgreementType;
 import com.gminds.employee_service.service.agreement.CachedPaymentRangeService;
 import com.gminds.employee_service.service.utils.validator.DateValidator;
 import com.gminds.employee_service.service.utils.validator.ListValidator;
@@ -27,22 +26,23 @@ public class AgreementValidatorService implements AgreementValidator, SalaryVali
     @Override
     public void validateAgreement(EmployeeAgreement employeeAgreement) throws EmployeeAgreementException {
         if (employeeAgreement.getStatus() != AgreementStatus.FINISHED) {
-            validateSalary(getPaymentRange(employeeAgreement), employeeAgreement.getSalary());
+            validateSalary(getPaymentRange(employeeAgreement), employeeAgreement);
         }
         logger.info("Employee Agreement with id: {}, and salary: {}", employeeAgreement.getId(), employeeAgreement.getSalary());
         DateValidator.validateIfEarlierIsBeforeLater(employeeAgreement.getFromDate(), employeeAgreement.getToDate());
     }
 
     @Override
-    public void validateSalary(PaymentRange paymentRange, Double salary) throws EmployeeAgreementException {
-        if (paymentRange.getMinSalary() > salary || paymentRange.getMaxSalary() < salary) {
-            logger.error("Salary ({}) must be in range of job payment range ({} - {}).",
-                    salary,
+    public void validateSalary(PaymentRange paymentRange, EmployeeAgreement employeeAgreement) throws EmployeeAgreementException {
+        if (paymentRange.getMinSalary() > employeeAgreement.getSalary() || paymentRange.getMaxSalary() < employeeAgreement.getSalary()) {
+            logger.error("Salary ({}) must be in range of job payment range ({} - {}) for {} agreement type.",
+                    employeeAgreement.getSalary(),
                     paymentRange.getMinSalary(),
-                    paymentRange.getMaxSalary()
+                    paymentRange.getMaxSalary(),
+                    employeeAgreement.getAgreementType()
             );
-            throw new EmployeeAgreementException("Salary (" + salary + ") must be in range of job payment range ("
-                    + paymentRange.getMinSalary() + " - " + paymentRange.getMaxSalary() + ").");
+            throw new EmployeeAgreementException("Salary (" + employeeAgreement.getSalary() + ") must be in range of job payment range ("
+                    + paymentRange.getMinSalary() + " - " + paymentRange.getMaxSalary() + ") for " + employeeAgreement.getAgreementType() + " agreement type.");
         }
 
     }
@@ -50,7 +50,7 @@ public class AgreementValidatorService implements AgreementValidator, SalaryVali
     private PaymentRange getPaymentRange(EmployeeAgreement employeeAgreement) throws EmployeeAgreementException {
         return cachedPaymentRangeService.getCachedPaymentRanges().stream()
                 .filter(pR -> pR.getJob().getId() == employeeAgreement.getEmployee().getJob().getId()
-                        && pR.getEmplAgreementType() == EmplAgreementType.B2B)
+                        && pR.getEmplAgreementType() == employeeAgreement.getAgreementType())
                 .findFirst().orElseThrow(() -> {
                     logger.error("Can't find " + employeeAgreement.getAgreementType() + " payment range for agreement with id: {}\n job id:{}\n agreementType:{}"
                             , employeeAgreement.getId()
