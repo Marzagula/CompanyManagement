@@ -322,6 +322,20 @@ public class EmployeeSteps {
         return agreementData;
     }
 
+    private Map<String, Object> createAgreement(String salary, String agreementType, Long id) {
+        Map<String, Object> agreementData = new HashMap<>();
+        agreementData.put("id", null);
+        agreementData.put("salary", Double.valueOf(salary));
+        agreementData.put("fromDate", LocalDate.now());
+        agreementData.put("toDate", LocalDate.now().plus(364, ChronoUnit.DAYS));
+        agreementData.put("status", "ACTIVE");
+        agreementData.put("agreementType", agreementType);
+        agreementData.put("paymentType", "PER_MONTH");
+        agreementData.put("employeeId", id);
+        return agreementData;
+    }
+
+
     private Map<String, Object> createAgreement(String salary, String agreementType, LocalDate startDate, LocalDate endDate) {
         Map<String, Object> agreementData = new HashMap<>();
         agreementData.put("id", null);
@@ -375,7 +389,8 @@ public class EmployeeSteps {
                         agreementDetails.get("newSalary"),
                         employee.getAgreements()
                                 .getFirst()
-                                .getAgreementType().name()
+                                .getAgreementType().name(),
+                        employee.getId()
                 );
 
                 RestClient restClient = RestClient.create();
@@ -404,7 +419,7 @@ public class EmployeeSteps {
         // Assert that there is no agreement with the specified salary for the given employee
         long count = employee.getAgreements().stream()
                 .filter(
-                        agr -> Objects.equals(agr.getSalary(), Double.valueOf(salary))
+                        agr -> agr.getSalary() == Double.valueOf(salary)
                                 && (agr.getStatus().equals(AgreementStatus.ACTIVE) || agr.getStatus().equals(AgreementStatus.FUTURE))
                 ).count();
         assertEquals(0, count);

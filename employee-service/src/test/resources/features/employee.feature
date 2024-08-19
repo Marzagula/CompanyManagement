@@ -42,7 +42,9 @@ Feature: Employee Management
     Then New agreement for "<name>" "<surname>" with salary "<newSalary>" should be prevented
 
     Examples:
-      | username | password | name | surname  | department | jobTitle         | salary | agreementType | certificateName           | companyName              | newSalary |
-      | user     | password | Adam | Thompson | IT         | Junior Developer | 5500   | B2B           | Java Professional         | Amsterdam Tech Solutions | 26000     |
-      | user     | password | Anna | Testowa  | HR         | HR Specialist    | 6000   | EMPLOYMENT    | Certified HR Professional | Global HR Solutions      | 30000     |
-      | user     | password | Mark | Brown    | SALES      | Sales Executive  | 7000   | B2B           | Sales Mastery             | Sales International      | 40000     |
+      | username | password | name    | surname     | department | jobTitle                | salary | agreementType | certificateName                           | companyName              | newSalary |
+      | user     | password | Adam    | Thompson    | IT         | Junior Developer        | 5500   | B2B           | Java Professional                         | Amsterdam Tech Solutions | 26000     |
+      | user     | password | Anna    | Testowa     | HR         | HR Specialist           | 6000   | EMPLOYMENT    | Certified HR Professional                 | Global HR Solutions      | 30000     |
+      | user     | password | Mark    | Brown       | SALES      | Sales Executive         | 7000   | B2B           | Sales Mastery                             | Sales International      | 40000     |
+      | user     | password | Marek   | Brazowy     | HR         | Recruitment Coordinator | 7000   | EMPLOYMENT    | Wciskanie pracownikom niekorzystnych umow | Januszex                 | 100       |
+      | user     | password | Andrzej | Synojcowski | ACCOUNTING | Finance Manager         | 20000  | B2B           | Bycie dobrym synem swojego ojca           | Tata                     | 23500     |
