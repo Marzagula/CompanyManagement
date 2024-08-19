@@ -75,7 +75,7 @@ public class AgreementValidatorServiceParametrizedTest {
 
         EmployeeAgreementDTO employeeAgreementDTO = new EmployeeAgreementDTO(
                 1L,
-                salary, // Parametryzowane wynagrodzenie
+                salary,
                 LocalDate.now(),
                 LocalDate.now().plusYears(1),
                 AgreementStatus.ACTIVE,
@@ -101,12 +101,12 @@ public class AgreementValidatorServiceParametrizedTest {
         );
         Employee employee = EmployeeMapper.INSTANCE.toEmployee(employeeDTO);
 
-        // Ustawienie zależności między obiektami
+        // Set dependencies between objects
         agreement.setEmployee(employee);
         employee.getAgreements().add(agreement);
         employee.setJob(job);
 
-        // Mockowanie PaymentRange i zachowania cachedPaymentRangeService
+        // Mock PaymentRange and cachedPaymentRangeService behavior
         PaymentRange paymentRange = new PaymentRange();
         paymentRange.setJob(job);
         paymentRange.setEmplAgreementType(agreementType);
@@ -122,7 +122,7 @@ public class AgreementValidatorServiceParametrizedTest {
                 agreementValidatorService.validateAgreement(agreement);
             });
         } else {
-            // When/Then - brak wyjątku
+            // When/Then - without exception (salary between range)
             agreementValidatorService.validateAgreement(agreement);
         }
     }

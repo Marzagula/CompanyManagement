@@ -14,18 +14,13 @@ import java.util.stream.Collectors;
 @Component
 public class AgreementProcessorFactory {
 
-    private final AgreementValidator agreementValidator;
-    private final AgreementManagementService agreementManagementService;
     private final Map<EmplAgreementType, AgreementProcessor> processorMap;
 
-    public AgreementProcessorFactory(List<AgreementProcessor> processors,
-                                     AgreementValidator agreementValidator,
-                                     AgreementManagementService agreementManagementService) {
+    public AgreementProcessorFactory(List<AgreementProcessor> processors
+    ) {
         this.processorMap = processors.stream()
                 .collect(Collectors.toMap(AgreementProcessor::getType, Function.identity()));
 
-        this.agreementValidator = agreementValidator;
-        this.agreementManagementService = agreementManagementService;
     }
 
     public AgreementProcessor getProcessor(EmplAgreementType agreementType) {
