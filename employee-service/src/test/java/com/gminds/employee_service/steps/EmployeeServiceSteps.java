@@ -16,6 +16,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.spring.CucumberContextConfiguration;
+import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -33,11 +34,9 @@ import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -105,7 +104,7 @@ public class EmployeeServiceSteps {
 
             HttpStatusCode statusCode = response.getStatusCode();
             assertEquals(HttpStatus.OK.value(), statusCode.value());
-            
+
             token = response.getBody();
 
         } catch (Exception e) {
@@ -241,7 +240,7 @@ public class EmployeeServiceSteps {
     public void the_employee_should_be_added_to_the_database_with_name_and_surname(String name, String surname) {
         try {
             Employee employee = employeeRepository.findById(employeeId).orElse(null);
-            assertTrue("Employee was not found in the database", employee != null);
+            Assert.assertNotNull("Employee was not found in the database", employee);
             assertEquals(name, employee.getName());
             assertEquals(surname, employee.getSurname());
         } catch (Exception e) {
@@ -463,7 +462,7 @@ public class EmployeeServiceSteps {
         agreementData.put("id", null);
         agreementData.put("salary", Double.valueOf(salary));
         agreementData.put("fromDate", LocalDate.now());
-        agreementData.put("toDate", LocalDate.now().plus(364, ChronoUnit.DAYS));
+        agreementData.put("toDate", LocalDate.now().plusDays(364));
         agreementData.put("status", "ACTIVE");
         agreementData.put("agreementType", agreementType);
         agreementData.put("paymentType", "PER_MONTH");
@@ -475,7 +474,7 @@ public class EmployeeServiceSteps {
         agreementData.put("id", null);
         agreementData.put("salary", Double.valueOf(salary));
         agreementData.put("fromDate", LocalDate.now());
-        agreementData.put("toDate", LocalDate.now().plus(364, ChronoUnit.DAYS));
+        agreementData.put("toDate", LocalDate.now().plusDays(364));
         agreementData.put("status", "ACTIVE");
         agreementData.put("agreementType", agreementType);
         agreementData.put("paymentType", "PER_MONTH");
@@ -500,8 +499,8 @@ public class EmployeeServiceSteps {
         Map<String, Object> certificateData = new HashMap<>();
         certificateData.put("id", null);
         certificateData.put("certificateName", certificateName);
-        certificateData.put("issueDate", LocalDate.now().minus(3, ChronoUnit.YEARS));
-        certificateData.put("expiryDate", LocalDate.now().plus(3, ChronoUnit.YEARS));
+        certificateData.put("issueDate", LocalDate.now().minusYears(3));
+        certificateData.put("expiryDate", LocalDate.now().plusYears(3));
         certificateData.put("issuedBy", "Certifying Body");
         return certificateData;
     }
@@ -521,7 +520,7 @@ public class EmployeeServiceSteps {
         if (randomNumGenerator.nextBoolean())
             certificateData.put("expiryDate", null);
         else
-            certificateData.put("expiryDate", issuedLocalDate.plus(3, ChronoUnit.YEARS));
+            certificateData.put("expiryDate", issuedLocalDate.plusYears(3));
         certificateData.put("issuedBy", issuedBy);
         certificateData.put("employeeId", employeeId.toString());
         return certificateData;
@@ -532,8 +531,8 @@ public class EmployeeServiceSteps {
         employmentHistoryData.put("id", null);
         employmentHistoryData.put("companyName", companyName);
         employmentHistoryData.put("jobName", jobName);
-        employmentHistoryData.put("fromDate", LocalDate.now().minus(2, ChronoUnit.YEARS));
-        employmentHistoryData.put("toDate", LocalDate.now().minus(10, ChronoUnit.DAYS));
+        employmentHistoryData.put("fromDate", LocalDate.now().minusYears(2));
+        employmentHistoryData.put("toDate", LocalDate.now().minusDays(10));
         return employmentHistoryData;
     }
 
