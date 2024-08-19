@@ -10,49 +10,13 @@ spring:
     password: test
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     schema: classpath:schema.sql
+
   jpa:
     hibernate:
       ddl-auto: none
 
-    h2:
-      console:
-        enabled: true
-      #show-sql: true
-
-  # logging:
-  #   level:
-  #     org.hibernate.SQL: DEBUG
-  #     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-  #     org.hibernate.type: TRACE
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${auth-server}
-          jwk-set-uri: ${auth-server}/jwks
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-
-#logging:
-#  level:
-#    org.springframework.security: DEBUG
-#    com.gminds.employee_service: DEBUG
-
-
-
-server:
-  port: 8602
-
-cache:
-  refresh:
-    interval: 3600000 #1h
-
-eureka:
-  client:
-    enabled: false
+  eureka:
+    client:
+      enabled: false
   instance:
     preferIpAddress: true

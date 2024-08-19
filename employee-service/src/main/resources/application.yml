@@ -4,9 +4,6 @@ spring:
   application:
     name: employee-server
   datasource:
-    url: jdbc:postgresql://localhost:5433/postgres
-    username: postgres
-    password: marcin123
     hikari:
       maximum-pool-size: 3
   jpa:
@@ -15,7 +12,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    #show-sql: true
+    show-sql: true
   security:
     oauth2:
       resourceserver:
@@ -23,9 +20,6 @@ spring:
           issuer-uri: auth-server
           jwk-set-uri: ${auth-server}/jwks
 
-#logging:
-#  level:
-#    org.springframework.security: DEBUG
 rsa:
   public-key: classpath:certs/public_key.pem
 server:
@@ -40,19 +34,3 @@ management:
     web:
       exposure:
         include: health,info
-
-eureka:
-  hostname: http://localhost:8761
-  client:
-    serviceUrl:
-      defaultZone:
-        ${EUREKA_URI: ${eureka.hostname}/eureka}
-    registerWithEureka: true
-    registryFetchIntervalSeconds: 10
-    instanceInfoReplicationIntervalSeconds: 10
-    fetchRegistry: true
-  instance:
-    preferIpAddress: true
-    homePageUrl: ${eureka.hostname}
-    statusPageUrl: https://${eureka.hostname}/info
-    healthCheckUrl: https://${eureka.hostname}/health
