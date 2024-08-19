@@ -5,6 +5,7 @@ import com.gminds.employee_service.model.Department;
 import com.gminds.employee_service.model.Employee;
 import com.gminds.employee_service.model.Job;
 import com.gminds.employee_service.model.dtos.EmployeeDTO;
+import com.gminds.employee_service.model.dtos.JobDTO;
 import com.gminds.employee_service.model.enums.AgreementStatus;
 import com.gminds.employee_service.repository.EmployeeRepository;
 import com.gminds.employee_service.repository.JobRepository;
@@ -384,7 +385,40 @@ public class EmployeeServiceSteps {
     }
 
     @Then("His name should be changed to {string} and surname to {string}")
-    public void hisNameShouldBeChangedToAndSurnameTo(String name, String surname) {
+    public void hisNameShouldBeChangedToAndSurnameTo(String newName, String newSurname) {
+        Employee employee = employeeRepository.findById(employeeId).orElseThrow();
+
+        assertEquals(employee.getName(),newName);
+        assertEquals(employee.getSurname(),newSurname);
+    }
+
+    @And("I change his job to job with jobId {string} from another department")
+    public void iChangeHisJobToJobWithJobIdFromAnotherDepartment(String newJobId) {
+        Map<String, Object> jobData = findOrCreateJob(newJobId);
+
+        String changeJobEndpoint = "/api/v1/employees/{employeeId}/changeJob";
+        String url = BASE_URL + changeJobEndpoint.replace("{employeeId}", employeeId.toString());
+
+        RestClient restClient = RestClient.create();
+
+        try{
+            restClient.put()
+                    .uri(url)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .body(jobData)
+                    .retrieve()
+                    .toEntity(JobDTO.class);
+        }catch (RestClientException e){
+            fail("Failed to change job: " + e.getMessage());
+        }
+    }
+
+    @Then("His department should be changed to {string}")
+    public void hisDepartmentShouldBeChangedTo(String newDepartment) {
+        Employee employee = employeeRepository
+                .findByIdWithJobAndDepartment(employeeId)
+                .orElseThrow();
+        assertEquals(employee.getDepartment().getName(),newDepartment);
     }
 
 
@@ -392,6 +426,18 @@ public class EmployeeServiceSteps {
         Job job = jobs.stream()
                 .filter(j -> j.getTitle().equals(jobTitle)
                         && j.getDepartment().getName().equals(departmentName))
+                .findFirst().orElseThrow();
+        Map<String, Object> jobData = new HashMap<>();
+        jobData.put("id", job.getId()); // Zakładane ID stanowiska pracy
+        jobData.put("title", job.getTitle());
+        jobData.put("description", job.getDescription());
+        jobData.put("departmentId", job.getDepartment().getId());
+        return jobData;
+    }
+
+    private Map<String, Object> findOrCreateJob(String jobId) {
+        Job job = jobs.stream()
+                .filter(j -> j.getId()==Long.parseLong(jobId))
                 .findFirst().orElseThrow();
         Map<String, Object> jobData = new HashMap<>();
         jobData.put("id", job.getId()); // Zakładane ID stanowiska pracy

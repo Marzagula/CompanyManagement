@@ -106,3 +106,32 @@ Feature: Employee Management
       | user     | password | Laszlo2  | Kovacs2    | ACCOUNTING | Finance Manager         | 23400  | B2B           | CFA - Chartered Financial Analyst     | FinCorp            | Larry   | Smith      |
       | user     | password | Sofia2   | Rossi2     | HR         | HR Manager              | 20280  | B2B           | SHRM-CP - Certified Professional      | PeopleSolutions    | Sophie  | Ross       |
       | user     | password | Ismail2  | Farah2     | HR         | Recruitment Coordinator | 10920  | B2B           | AIRS Certified Internet Recruiter     | TalentFinders      | Ian     | Fair       |
+
+  Scenario Outline: Change department when job is changed to different department
+    Given I am authenticated as "<username>" with password "<password>"
+    And the employee service is running
+    When I create a new employee with the following details:
+      | key             | value             |
+      | name            | <name>            |
+      | surname         | <surname>         |
+      | departmentName  | <department>      |
+      | jobTitle        | <jobTitle>        |
+      | salary          | <salary>          |
+      | agreementType   | <agreementType>   |
+      | certificateName | <certificateName> |
+      | companyName     | <companyName>     |
+
+    And I change his job to job with jobId "<newJobId>" from another department
+    Then His department should be changed to "<newDepartmentName>"
+    Examples:
+      | username    | password    | name         | surname        | department   | jobTitle             | salary   | agreementType   | certificateName                      | companyName            | newJobId   | newDepartmentName   |
+      | user        | password    | Sven         | Lundqvist      | IT           | Junior Developer     | 4680     | B2B             | Certified Java Developer             | TechCorp               | 14         | HR                  |
+      | user        | password    | Aisling      | O'Sullivan     | IT           | Senior Developer     | 12480    | EMPLOYMENT      | AWS Certified Solutions Architect    | Innovatech             | 11         | ACCOUNTING          |
+      | user        | password    | Hiroshi      | Nakamura       | PRODUCT      | Product Manager      | 10920    | B2B             | Certified ScrumMaster                | Productify             | 1          | IT                  |
+      | user        | password    | Fatima       | Al-Muhammad    | PRODUCT      | Product Owner        | 10140    | EMPLOYMENT      | PMP Certification                    | CreativeSolutions      | 8          | SALES               |
+      | user        | password    | Giuseppe     | Ricci          | SALES        | Sales Executive      | 6240     | B2B             | Certified Sales Professional         | SalesForce             | 10         | ACCOUNTING          |
+      | user        | password    | Ingrid       | Svensson       | ACCOUNTING   | Finance Manager      | 15600    | B2B             | Certified Management Accountant      | FinanceHub             | 5          | PRODUCT             |
+      | user        | password    | Dragomir     | Petrovic       | HR           | HR Specialist        | 7800     | EMPLOYMENT      | SHRM Certified Professional          | HRPro                  | 7          | SALES               |
+      | user        | password    | Mei          | Zhang          | HR           | HR Manager           | 14040    | B2B             | Global Professional in HR (GPHR)     | GlobalHR               | 4          | PRODUCT             |
+      | user        | password    | Valentina    | Romanova       | IT           | DevOps Engineer      | 9360     | EMPLOYMENT      | Certified Kubernetes Administrator   | DevOpsGen              | 15         | HR                  |
+      | user        | password    | Leonardo     | Almeida        | SALES        | Sales Manager        | 14040    | B2B             | Certified Sales Leader               | LeadSales              | 2          | IT                  |
