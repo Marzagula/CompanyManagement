@@ -105,8 +105,7 @@ public class EmployeeServiceSteps {
 
             HttpStatusCode statusCode = response.getStatusCode();
             assertEquals(HttpStatus.OK.value(), statusCode.value());
-
-            // Ponieważ token jest płaskim stringiem, możemy go bezpośrednio przypisać
+            
             token = response.getBody();
 
         } catch (Exception e) {
@@ -388,8 +387,8 @@ public class EmployeeServiceSteps {
     public void hisNameShouldBeChangedToAndSurnameTo(String newName, String newSurname) {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow();
 
-        assertEquals(employee.getName(),newName);
-        assertEquals(employee.getSurname(),newSurname);
+        assertEquals(employee.getName(), newName);
+        assertEquals(employee.getSurname(), newSurname);
     }
 
     @And("I change his job to job with jobId {string} from another department")
@@ -401,14 +400,14 @@ public class EmployeeServiceSteps {
 
         RestClient restClient = RestClient.create();
 
-        try{
+        try {
             restClient.put()
                     .uri(url)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                     .body(jobData)
                     .retrieve()
                     .toEntity(JobDTO.class);
-        }catch (RestClientException e){
+        } catch (RestClientException e) {
             fail("Failed to change job: " + e.getMessage());
         }
     }
@@ -418,7 +417,7 @@ public class EmployeeServiceSteps {
         Employee employee = employeeRepository
                 .findByIdWithJobAndDepartment(employeeId)
                 .orElseThrow();
-        assertEquals(employee.getDepartment().getName(),newDepartment);
+        assertEquals(employee.getDepartment().getName(), newDepartment);
     }
 
 
@@ -437,7 +436,7 @@ public class EmployeeServiceSteps {
 
     private Map<String, Object> findOrCreateJob(String jobId) {
         Job job = jobs.stream()
-                .filter(j -> j.getId()==Long.parseLong(jobId))
+                .filter(j -> j.getId() == Long.parseLong(jobId))
                 .findFirst().orElseThrow();
         Map<String, Object> jobData = new HashMap<>();
         jobData.put("id", job.getId()); // Zakładane ID stanowiska pracy

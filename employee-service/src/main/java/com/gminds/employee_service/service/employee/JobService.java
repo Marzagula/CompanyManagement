@@ -9,7 +9,6 @@ import com.gminds.employee_service.repository.JobRepository;
 import com.gminds.employee_service.service.utils.EmployeeProperty;
 import com.gminds.employee_service.service.utils.mappers.JobMapper;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

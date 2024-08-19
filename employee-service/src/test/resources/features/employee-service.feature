@@ -124,14 +124,14 @@ Feature: Employee Management
     And I change his job to job with jobId "<newJobId>" from another department
     Then His department should be changed to "<newDepartmentName>"
     Examples:
-      | username    | password    | name         | surname        | department   | jobTitle             | salary   | agreementType   | certificateName                      | companyName            | newJobId   | newDepartmentName   |
-      | user        | password    | Sven         | Lundqvist      | IT           | Junior Developer     | 4680     | B2B             | Certified Java Developer             | TechCorp               | 14         | HR                  |
-      | user        | password    | Aisling      | O'Sullivan     | IT           | Senior Developer     | 12480    | EMPLOYMENT      | AWS Certified Solutions Architect    | Innovatech             | 11         | ACCOUNTING          |
-      | user        | password    | Hiroshi      | Nakamura       | PRODUCT      | Product Manager      | 10920    | B2B             | Certified ScrumMaster                | Productify             | 1          | IT                  |
-      | user        | password    | Fatima       | Al-Muhammad    | PRODUCT      | Product Owner        | 10140    | EMPLOYMENT      | PMP Certification                    | CreativeSolutions      | 8          | SALES               |
-      | user        | password    | Giuseppe     | Ricci          | SALES        | Sales Executive      | 6240     | B2B             | Certified Sales Professional         | SalesForce             | 10         | ACCOUNTING          |
-      | user        | password    | Ingrid       | Svensson       | ACCOUNTING   | Finance Manager      | 15600    | B2B             | Certified Management Accountant      | FinanceHub             | 5          | PRODUCT             |
-      | user        | password    | Dragomir     | Petrovic       | HR           | HR Specialist        | 7800     | EMPLOYMENT      | SHRM Certified Professional          | HRPro                  | 7          | SALES               |
-      | user        | password    | Mei          | Zhang          | HR           | HR Manager           | 14040    | B2B             | Global Professional in HR (GPHR)     | GlobalHR               | 4          | PRODUCT             |
-      | user        | password    | Valentina    | Romanova       | IT           | DevOps Engineer      | 9360     | EMPLOYMENT      | Certified Kubernetes Administrator   | DevOpsGen              | 15         | HR                  |
-      | user        | password    | Leonardo     | Almeida        | SALES        | Sales Manager        | 14040    | B2B             | Certified Sales Leader               | LeadSales              | 2          | IT                  |
+      | username | password | name      | surname     | department | jobTitle         | salary | agreementType | certificateName                    | companyName       | newJobId | newDepartmentName |
+      | user     | password | Sven      | Lundqvist   | IT         | Junior Developer | 4680   | B2B           | Certified Java Developer           | TechCorp          | 14       | HR                |
+      | user     | password | Aisling   | O'Sullivan  | IT         | Senior Developer | 12480  | EMPLOYMENT    | AWS Certified Solutions Architect  | Innovatech        | 11       | ACCOUNTING        |
+      | user     | password | Hiroshi   | Nakamura    | PRODUCT    | Product Manager  | 10920  | B2B           | Certified ScrumMaster              | Productify        | 1        | IT                |
+      | user     | password | Fatima    | Al-Muhammad | PRODUCT    | Product Owner    | 10140  | EMPLOYMENT    | PMP Certification                  | CreativeSolutions | 8        | SALES             |
+      | user     | password | Giuseppe  | Ricci       | SALES      | Sales Executive  | 6240   | B2B           | Certified Sales Professional       | SalesForce        | 10       | ACCOUNTING        |
+      | user     | password | Ingrid    | Svensson    | ACCOUNTING | Finance Manager  | 15600  | B2B           | Certified Management Accountant    | FinanceHub        | 5        | PRODUCT           |
+      | user     | password | Dragomir  | Petrovic    | HR         | HR Specialist    | 7800   | EMPLOYMENT    | SHRM Certified Professional        | HRPro             | 7        | SALES             |
+      | user     | password | Mei       | Zhang       | HR         | HR Manager       | 14040  | B2B           | Global Professional in HR (GPHR)   | GlobalHR          | 4        | PRODUCT           |
+      | user     | password | Valentina | Romanova    | IT         | DevOps Engineer  | 9360   | EMPLOYMENT    | Certified Kubernetes Administrator | DevOpsGen         | 15       | HR                |
+      | user     | password | Leonardo  | Almeida     | SALES      | Sales Manager    | 14040  | B2B           | Certified Sales Leader             | LeadSales         | 2        | IT                |
