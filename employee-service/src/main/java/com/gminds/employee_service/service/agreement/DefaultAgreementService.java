@@ -9,7 +9,7 @@ import com.gminds.employee_service.repository.EmployeeRepository;
 import com.gminds.employee_service.service.agreement.factory.AgreementProcessorFactory;
 import com.gminds.employee_service.service.agreement.processor.AgreementProcessor;
 import com.gminds.employee_service.service.agreement.strategy.AgreementCollectionStrategy;
-import com.gminds.employee_service.service.utils.TransactionHelper;
+import com.gminds.employee_service.service.agreement.template.AgreementTransactionHelper;
 import com.gminds.employee_service.service.utils.mappers.EmployeeAgreementMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -17,12 +17,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class DefaultAgreementService extends AgreementCollectionStrategy implements AgreementService {
 
-    private final TransactionHelper transactionHelper;
+    private final AgreementTransactionHelper transactionHelper;
     private final AgreementProcessorFactory agreementProcessorFactory;
     private final EmployeeRepository employeeRepository;
 
 
-    public DefaultAgreementService(TransactionHelper transactionHelper,
+    public DefaultAgreementService(AgreementTransactionHelper transactionHelper,
                                    AgreementProcessorFactory agreementProcessorFactory,
                                    EmployeeRepository employeeRepository) {
         this.transactionHelper = transactionHelper;
@@ -31,13 +31,14 @@ public class DefaultAgreementService extends AgreementCollectionStrategy impleme
     }
 
     @Transactional
-    public EmployeeAgreementDTO newAgreement(Long employeeId, EmployeeAgreementDTO agreementDTO) {
+    public EmployeeAgreementDTO newAgreement(Long employeeId, EmployeeAgreementDTO agreementDTO) throws EmployeeAgreementException {
         return transactionHelper.executeInTransaction(() -> {
             Employee employee = employeeRepository.findById(employeeId)
                     .orElseThrow(() -> new ResourceNotFoundException("Employee with id " + employeeId + " not found"));
             EmployeeAgreement newAgreement = EmployeeAgreementMapper.INSTANCE.toEmployeeAgreement(agreementDTO);
             addToCollection(employee, newAgreement);
             AgreementProcessor processor = agreementProcessorFactory.getProcessor(newAgreement.getAgreementType());
+
             try {
                 processor.process(newAgreement);
             } catch (EmployeeAgreementException e) {

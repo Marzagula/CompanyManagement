@@ -34,7 +34,8 @@ public class AgreementValidatorService implements AgreementValidator, SalaryVali
 
     @Override
     public void validateSalary(PaymentRange paymentRange, EmployeeAgreement employeeAgreement) throws EmployeeAgreementException {
-        if (paymentRange.getMinSalary() > employeeAgreement.getSalary() || paymentRange.getMaxSalary() < employeeAgreement.getSalary()) {
+        if (!(paymentRange.getMinSalary() <= employeeAgreement.getSalary() &&
+                paymentRange.getMaxSalary() >= employeeAgreement.getSalary())) {
             logger.error("Salary ({}) must be in range of job payment range ({} - {}) for {} agreement type.",
                     employeeAgreement.getSalary(),
                     paymentRange.getMinSalary(),

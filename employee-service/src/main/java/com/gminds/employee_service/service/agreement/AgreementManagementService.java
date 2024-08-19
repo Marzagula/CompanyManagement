@@ -1,12 +1,13 @@
 package com.gminds.employee_service.service.agreement;
 
+import com.gminds.employee_service.exceptions.EmployeeAgreementException;
 import com.gminds.employee_service.exceptions.ResourceNotFoundException;
 import com.gminds.employee_service.model.Employee;
 import com.gminds.employee_service.model.EmployeeAgreement;
 import com.gminds.employee_service.model.enums.AgreementStatus;
 import com.gminds.employee_service.repository.EmployeeAgreementRepository;
 import com.gminds.employee_service.repository.EmployeeRepository;
-import com.gminds.employee_service.service.utils.TransactionHelper;
+import com.gminds.employee_service.service.agreement.template.AgreementTransactionHelper;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,17 +22,17 @@ public class AgreementManagementService {
     private static final Logger logger = LoggerFactory.getLogger(AgreementManagementService.class);
     private final EmployeeAgreementRepository employeeAgreementRepository;
     private final EmployeeRepository employeeRepository;
-    private final TransactionHelper transactionHelper;
+    private final AgreementTransactionHelper transactionHelper;
 
     public AgreementManagementService(EmployeeAgreementRepository employeeAgreementRepository,
-                                      TransactionHelper transactionHelper,
+                                      AgreementTransactionHelper transactionHelper,
                                       EmployeeRepository employeeRepository) {
         this.employeeAgreementRepository = employeeAgreementRepository;
         this.transactionHelper = transactionHelper;
         this.employeeRepository = employeeRepository;
     }
 
-    public EmployeeAgreement createAndAddNewAgreement(Employee employee, EmployeeAgreement newAgreement) {
+    public EmployeeAgreement createAndAddNewAgreement(Employee employee, EmployeeAgreement newAgreement) throws EmployeeAgreementException {
         employee.getAgreements().add(newAgreement);
         newAgreement.setEmployee(employee);
         newAgreement.setStatus(determineAgreementStatus(newAgreement));
@@ -56,7 +57,7 @@ public class AgreementManagementService {
      * @param newAgreementStartDate the start date of the new agreement
      */
     @Transactional
-    public void closePreviousAgreement(EmployeeAgreement lastAgreement, LocalDate newAgreementStartDate) {
+    public void closePreviousAgreement(EmployeeAgreement lastAgreement, LocalDate newAgreementStartDate) throws EmployeeAgreementException {
         LocalDate adjustedToDate = newAgreementStartDate.minusDays(1);
         lastAgreement.setToDate(adjustedToDate);
         if (!lastAgreement.getToDate().isAfter(LocalDate.now())) {
