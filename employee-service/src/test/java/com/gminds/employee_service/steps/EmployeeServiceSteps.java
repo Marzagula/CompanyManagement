@@ -32,6 +32,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -45,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @Testcontainers
 @Import(AuthResourceServerConfig.class)
-public class EmployeeSteps {
+public class EmployeeServiceSteps {
 
     private static final String BASE_URL = "http://localhost:8602";
     private static final String AUTH_URL = "http://localhost:9000";
@@ -285,6 +286,96 @@ public class EmployeeSteps {
         }
     }
 
+
+    @And("I update the agreements for these employees with the following details:")
+    public void iUpdateTheAgreementsForTheseEmployeesWithTheFollowingDetails(DataTable dataTable) {
+        List<Map<String, String>> agreements = dataTable.asMaps(String.class, String.class);
+
+        for (Map<String, String> agreementDetails : agreements) {
+            Employee employee = employeeRepository
+                    .findByNameAndSurnameWithAgreements(
+                            agreementDetails.get("name"),
+                            agreementDetails.get("surname"))
+                    .orElse(null);
+
+            String updateAgreementEndpoint = "/api/v1/employees/{employeeId}/agreement";
+            if (employee != null) {
+
+                String url = BASE_URL + updateAgreementEndpoint.replace("{employeeId}", employee.getId().toString());
+
+                Map<String, Object> agreementData = createAgreement(
+                        agreementDetails.get("newSalary"),
+                        employee.getAgreements()
+                                .getFirst()
+                                .getAgreementType().name(),
+                        employee.getId()
+                );
+
+                RestClient restClient = RestClient.create();
+                try {
+                    restClient.post()
+                            .uri(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .body(agreementData)
+                            .retrieve()
+                            .toEntity(Void.class);
+                    fail("Expected HttpStatusCodeException not thrown");
+                } catch (HttpStatusCodeException ex) {
+                    assertEquals(HttpStatus.BAD_REQUEST.value(), ex.getStatusCode().value());
+                }
+            } else {
+                fail("Employee not found: " + agreementDetails.get("name") + " " + agreementDetails.get("surname"));
+            }
+        }
+    }
+
+    @Then("New agreement for {string} {string} with salary {string} should be prevented")
+    public void newAgreementWithWithSalaryShouldBePrevented(String name, String surname, String salary) {
+        Employee employee = employeeRepository.findByNameAndSurnameWithAgreements(name, surname).orElse(null);
+        assertNotNull(employee, "Employee should exist in the database");
+
+        // Assert that there is no agreement with the specified salary for the given employee
+        long count = employee.getAgreements().stream()
+                .filter(
+                        agr -> agr.getSalary() == Double.valueOf(salary)
+                                && (agr.getStatus().equals(AgreementStatus.ACTIVE) || agr.getStatus().equals(AgreementStatus.FUTURE))
+                ).count();
+        assertEquals(0, count);
+    }
+
+    @And("I create new certificate with the following details:")
+    public void iCreateNewCertificateWithTheFollowingDetails(DataTable dataTable) {
+        Map<String, String> certificateDetails = dataTable.asMap(String.class, String.class);
+        Employee employee = employeeRepository
+                .findByNameAndSurnameWithCertificates(certificateDetails.get("name"), certificateDetails.get("surname"))
+                .orElseThrow();
+
+        String createCertificateEndpoint = "/api/v1/employees/{employeeId}/certificate";
+        String url = BASE_URL + createCertificateEndpoint.replace("{employeeId}", employee.getId().toString());
+
+
+        RestClient restClient = RestClient.create();
+        try {
+            restClient.post()
+                    .uri(url)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .body(createCertificate(
+                                    certificateDetails.get("newCertificateName"),
+                                    certificateDetails.get("issuedBy"),
+                                    certificateDetails.get("issueDate"),
+                                    employee.getId()
+                            )
+                    )
+                    .retrieve()
+                    .toEntity(String.class);
+
+        } catch (RestClientException e) {
+            fail("Failed to create certficate: " + e.getMessage());
+        }
+
+    }
+
+
     private Map<String, Object> findOrCreateJob(String jobTitle, String departmentName) {
         Job job = jobs.stream()
                 .filter(j -> j.getTitle().equals(jobTitle)
@@ -358,6 +449,27 @@ public class EmployeeSteps {
         return certificateData;
     }
 
+    private Map<String, Object> createCertificate(String certificateName, String issuedBy, String issueDate, Long employeeId) {
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        Random randomNumGenerator = new Random();
+        LocalDate issuedLocalDate = LocalDate.parse(issueDate, dtf);
+
+        Map<String, Object> certificateData = new HashMap<>();
+        certificateData.put("id", null);
+        certificateData.put("certificateName", certificateName);
+
+        certificateData.put("issueDate", issuedLocalDate);
+
+        // Should work for both null and normal date.
+        if (randomNumGenerator.nextBoolean())
+            certificateData.put("expiryDate", null);
+        else
+            certificateData.put("expiryDate", issuedLocalDate.plus(3, ChronoUnit.YEARS));
+        certificateData.put("issuedBy", issuedBy);
+        certificateData.put("employeeId", employeeId.toString());
+        return certificateData;
+    }
+
     private Map<String, Object> createEmploymentHistory(String companyName, Object jobName) {
         Map<String, Object> employmentHistoryData = new HashMap<>();
         employmentHistoryData.put("id", null);
@@ -368,61 +480,20 @@ public class EmployeeSteps {
         return employmentHistoryData;
     }
 
-
-    @And("I update the agreements for these employees with the following details:")
-    public void iUpdateTheAgreementsForTheseEmployeesWithTheFollowingDetails(DataTable dataTable) {
-        List<Map<String, String>> agreements = dataTable.asMaps(String.class, String.class);
-
-        for (Map<String, String> agreementDetails : agreements) {
-            Employee employee = employeeRepository
-                    .findByNameAndSurnameWithAgreements(
-                            agreementDetails.get("name"),
-                            agreementDetails.get("surname"))
-                    .orElse(null);
-
-            String updateAgreementEndpoint = "/api/v1/employees/{employeeId}/agreement";
-            if (employee != null) {
-
-                String url = BASE_URL + updateAgreementEndpoint.replace("{employeeId}", employee.getId().toString());
-
-                Map<String, Object> agreementData = createAgreement(
-                        agreementDetails.get("newSalary"),
-                        employee.getAgreements()
-                                .getFirst()
-                                .getAgreementType().name(),
-                        employee.getId()
-                );
-
-                RestClient restClient = RestClient.create();
-                try {
-                    restClient.post()
-                            .uri(url)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .body(agreementData)
-                            .retrieve()
-                            .toEntity(Void.class);
-                    fail("Expected HttpStatusCodeException not thrown");
-                } catch (HttpStatusCodeException ex) {
-                    assertEquals(HttpStatus.BAD_REQUEST.value(), ex.getStatusCode().value());
-                }
-            } else {
-                fail("Employee not found: " + agreementDetails.get("name") + " " + agreementDetails.get("surname"));
-            }
-        }
-    }
-
-    @Then("New agreement for {string} {string} with salary {string} should be prevented")
-    public void newAgreementWithWithSalaryShouldBePrevented(String name, String surname, String salary) {
-        Employee employee = employeeRepository.findByNameAndSurnameWithAgreements(name, surname).orElse(null);
+    @Then("New certificate should be created for {string} {string} with certificateName {string}, issuedBy {string} on day {string}")
+    public void newCertShouldBeCreatedWithCertNameIssuedByOnDay(String name, String surname, String certificateName, String issuedBy, String issueDate) {
+        Employee employee = employeeRepository.findByNameAndSurnameWithCertificates(name, surname).orElse(null);
         assertNotNull(employee, "Employee should exist in the database");
-
-        // Assert that there is no agreement with the specified salary for the given employee
-        long count = employee.getAgreements().stream()
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate issuedLocalDate = LocalDate.parse(issueDate, dtf);
+        // Assert that there new certificate added to employee
+        long count = employee.getCertificates().stream()
                 .filter(
-                        agr -> agr.getSalary() == Double.valueOf(salary)
-                                && (agr.getStatus().equals(AgreementStatus.ACTIVE) || agr.getStatus().equals(AgreementStatus.FUTURE))
+                        cert -> cert.getCertificateName().equals(certificateName) &&
+                                cert.getIssueDate().equals(issuedLocalDate) &&
+                                cert.getIssuedBy().equals(issuedBy)
                 ).count();
-        assertEquals(0, count);
+        assertEquals(1, count);
     }
 }
 
