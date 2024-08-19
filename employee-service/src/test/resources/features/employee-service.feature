@@ -95,5 +95,14 @@ Feature: Employee Management
       | certificateName | <certificateName> |
       | companyName     | <companyName>     |
 
-    Then: His name should be changed to "<newName>" and surname to "<newSurname>"
+    And I change "<name>" "<surname>" name to "<newName>" and surname to "<newSurname>"
+    Then His name should be changed to "<newName>" and surname to "<newSurname>"
     Examples:
+      | username | password | name     | surname    | department | jobTitle                | salary | agreementType | certificateName                       | companyName        | newName | newSurname |
+      | user     | password | Hiroshi2 | Nakamura2  | IT         | Junior Developer        | 7800   | B2B           | AWS Certified Developer               | ABC Tech           | Hero    | Nakamoora  |
+      | user     | password | Elena2   | Petrov2    | IT         | Senior Developer        | 18720  | B2B           | Oracle Certified Java Developer       | XYZ Solutions      | Ellen   | Peterson   |
+      | user     | password | Carlos2  | Oliveira2  | PRODUCT    | Product Manager         | 17160  | B2B           | PMP - Project Management Professional | Global Innovations | Carl    | Olivier    |
+      | user     | password | Amina2   | Kovacevic2 | SALES      | Sales Manager           | 23400  | B2B           | Certified Sales Executive             | SalesPro           | Amelie  | Smith      |
+      | user     | password | Laszlo2  | Kovacs2    | ACCOUNTING | Finance Manager         | 23400  | B2B           | CFA - Chartered Financial Analyst     | FinCorp            | Larry   | Smith      |
+      | user     | password | Sofia2   | Rossi2     | HR         | HR Manager              | 20280  | B2B           | SHRM-CP - Certified Professional      | PeopleSolutions    | Sophie  | Ross       |
+      | user     | password | Ismail2  | Farah2     | HR         | Recruitment Coordinator | 10920  | B2B           | AIRS Certified Internet Recruiter     | TalentFinders      | Ian     | Fair       |

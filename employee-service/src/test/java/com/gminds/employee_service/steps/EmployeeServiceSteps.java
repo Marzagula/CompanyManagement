@@ -23,7 +23,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
@@ -88,42 +87,6 @@ public class EmployeeServiceSteps {
             assertEquals(200, response.getStatusCode().value());
         } catch (RestClientException e) {
             fail("Service is not running: " + e.getMessage());
-        }
-    }
-
-    @When("I create a new employee with name {string}")
-    public void iCreateANewEmployeeWithNameAndPosition(String name) {
-        String url = BASE_URL + CREATE_EMPLOYEE_ENDPOINT;
-
-        Map<String, Object> employeeData = properEmployeeDataB2B(name);
-
-
-        RestClient restClient = RestClient.create();
-        try {
-            ResponseEntity<EmployeeDTO> response = restClient.post()
-                    .uri(url)
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                    .body(employeeData)
-                    .retrieve()
-                    .toEntity(EmployeeDTO.class);
-
-            employeeId = response.getBody().id();
-            assertEquals(HttpStatus.CREATED.value(), response.getStatusCode().value());
-        } catch (RestClientException e) {
-
-            fail("Failed to create employee: " + e.getMessage());
-        }
-    }
-
-    @Then("the employee should be added to the database with name {string}")
-    @Transactional(readOnly = true)
-    public void theEmployeeShouldBeAddedToTheDatabase(String name) {
-        try {
-            Employee employee = employeeRepository.findById(employeeId).orElse(null);
-            assertTrue("Employee was not found in the database", employee != null);
-            assertEquals(name, "John Doe");
-        } catch (Exception e) {
-            fail("An error occurred while verifying the employee in the database: " + e.getMessage());
         }
     }
 
@@ -375,6 +338,55 @@ public class EmployeeServiceSteps {
 
     }
 
+    @Then("New certificate should be created for {string} {string} with certificateName {string}, issuedBy {string} on day {string}")
+    public void newCertShouldBeCreatedWithCertNameIssuedByOnDay(String name, String surname, String certificateName, String issuedBy, String issueDate) {
+        Employee employee = employeeRepository.findByNameAndSurnameWithCertificates(name, surname).orElse(null);
+        assertNotNull(employee, "Employee should exist in the database");
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate issuedLocalDate = LocalDate.parse(issueDate, dtf);
+        // Assert that there new certificate added to employee
+        long count = employee.getCertificates().stream()
+                .filter(
+                        cert -> cert.getCertificateName().equals(certificateName) &&
+                                cert.getIssueDate().equals(issuedLocalDate) &&
+                                cert.getIssuedBy().equals(issuedBy)
+                ).count();
+        assertEquals(1, count);
+    }
+
+    @And("I change {string} {string} name to {string} and surname to {string}")
+    public void iChangeTheirNameToAndSurnameTo(String name, String surname, String newName, String newSurname) {
+        Employee employee = employeeRepository
+                .findByNameAndSurnameWithCertificates(name, surname)
+                .orElseThrow();
+
+        String changePersonalInfoEndpoint = "/api/v1/employees/{employeeId}";
+        String url = BASE_URL + changePersonalInfoEndpoint.replace("{employeeId}", employee.getId().toString());
+
+        RestClient restClient = RestClient.create();
+
+        Map<String, Object> employeeData = new HashMap<>();
+        employeeData.put("id", null);
+        employeeData.put("name", newName);
+        employeeData.put("surname", newSurname);
+
+        try {
+            restClient.put()
+                    .uri(url)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .body(employeeData)
+                    .retrieve()
+                    .toEntity(EmployeeDTO.class);
+
+        } catch (RestClientException e) {
+            fail("Failed to change personal information: " + e.getMessage());
+        }
+    }
+
+    @Then("His name should be changed to {string} and surname to {string}")
+    public void hisNameShouldBeChangedToAndSurnameTo(String name, String surname) {
+    }
+
 
     private Map<String, Object> findOrCreateJob(String jobTitle, String departmentName) {
         Job job = jobs.stream()
@@ -480,21 +492,7 @@ public class EmployeeServiceSteps {
         return employmentHistoryData;
     }
 
-    @Then("New certificate should be created for {string} {string} with certificateName {string}, issuedBy {string} on day {string}")
-    public void newCertShouldBeCreatedWithCertNameIssuedByOnDay(String name, String surname, String certificateName, String issuedBy, String issueDate) {
-        Employee employee = employeeRepository.findByNameAndSurnameWithCertificates(name, surname).orElse(null);
-        assertNotNull(employee, "Employee should exist in the database");
-        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate issuedLocalDate = LocalDate.parse(issueDate, dtf);
-        // Assert that there new certificate added to employee
-        long count = employee.getCertificates().stream()
-                .filter(
-                        cert -> cert.getCertificateName().equals(certificateName) &&
-                                cert.getIssueDate().equals(issuedLocalDate) &&
-                                cert.getIssuedBy().equals(issuedBy)
-                ).count();
-        assertEquals(1, count);
-    }
+
 }
 
 

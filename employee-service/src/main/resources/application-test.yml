@@ -15,6 +15,9 @@ spring:
     hibernate:
       ddl-auto: none
 
+server:
+  port: 8602
+
   eureka:
     client:
       enabled: false
