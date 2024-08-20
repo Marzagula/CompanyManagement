@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class EmployeeMapperTest {
 
     @Test
-    public void shouldMapEmployeeToEmployeeDTOWithRelations() {
+    public void shouldMapEmployeeToEmployeeDTO() {
         Employee employee = new Employee();
         employee.setName("John");
         employee.setSurname("Doe");
@@ -38,7 +38,7 @@ public class EmployeeMapperTest {
     }
 
     @Test
-    public void shouldMapEmployeeDTOToEmployee() {
+    public void shouldMapEmployeeToEmployeeDTOWithRelations() {
         EmployeeAgreementDTO employeeAgreementDTO = new EmployeeAgreementDTO(
                 1L,
                 8000.0,
@@ -93,25 +93,27 @@ public class EmployeeMapperTest {
         assertEquals(employeeDTO.surname(), employee.getSurname());
         assertEquals(employeeDTO.id(), employee.getId());
         assertJob(employeeDTO.job(), employee.getJob());
-        assertDepartment(employeeDTO.department(),employee.getDepartment());
-        assertAgreements(employeeDTO.agreements(),employee.getAgreements());
-        assertCertificates(employeeDTO.certificates(),employee.getCertificates());
-        assertEmploymentHistories(employeeDTO.employmentHistory(),employee.getEmploymentHistory());
+        assertDepartment(employeeDTO.department(), employee.getDepartment());
+        assertAgreements(employeeDTO.agreements(), employee.getAgreements());
+        assertCertificates(employeeDTO.certificates(), employee.getCertificates());
+        assertEmploymentHistories(employeeDTO.employmentHistory(), employee.getEmploymentHistory());
 
     }
 
-    void assertJob(JobDTO jobDTO, Job job ){
-        assertEquals(job.getId(),jobDTO.id());
-        assertEquals(job.getDepartment().getId(),jobDTO.departmentId());
-        assertEquals(job.getTitle(),jobDTO.title());
-        assertEquals(job.getDescription(),jobDTO.description());
+    void assertJob(JobDTO jobDTO, Job job) {
+        assertEquals(job.getId(), jobDTO.id());
+        assertEquals(job.getDepartment().getId(), jobDTO.departmentId());
+        assertEquals(job.getTitle(), jobDTO.title());
+        assertEquals(job.getDescription(), jobDTO.description());
     }
-    void assertDepartment(DepartmentDTO departmentDTO, Department department){
-        assertEquals(departmentDTO.id(),department.getId());
-        assertEquals(departmentDTO.description(),department.getDescription());
-        assertEquals(departmentDTO.name(),department.getName());
+
+    void assertDepartment(DepartmentDTO departmentDTO, Department department) {
+        assertEquals(departmentDTO.id(), department.getId());
+        assertEquals(departmentDTO.description(), department.getDescription());
+        assertEquals(departmentDTO.name(), department.getName());
     }
-    void assertAgreements(List<EmployeeAgreementDTO> agreementDTOS, List<EmployeeAgreement> agreements){
+
+    void assertAgreements(List<EmployeeAgreementDTO> agreementDTOS, List<EmployeeAgreement> agreements) {
 
         Map<Long, EmployeeAgreement> agreementsMap = agreements.stream()
                 .collect(Collectors.toMap(EmployeeAgreement::getId, agreement -> agreement));
@@ -123,17 +125,17 @@ public class EmployeeMapperTest {
         });
     }
 
-    void assertAgreement(EmployeeAgreementDTO agreementDTO, EmployeeAgreement agreement){
-        assertEquals(agreementDTO.agreementType(),agreement.getAgreementType());
-        assertEquals(agreementDTO.salary(),agreement.getSalary());
-        assertEquals(agreementDTO.fromDate(),agreement.getFromDate());
-        assertEquals(agreementDTO.toDate(),agreement.getToDate());
-        assertEquals(agreementDTO.paymentType(),agreement.getPaymentType());
-        assertEquals(agreementDTO.status(),agreement.getStatus());
-        assertEquals(agreementDTO.employeeId(),agreement.getEmployee().getId());
+    void assertAgreement(EmployeeAgreementDTO agreementDTO, EmployeeAgreement agreement) {
+        assertEquals(agreementDTO.agreementType(), agreement.getAgreementType());
+        assertEquals(agreementDTO.salary(), agreement.getSalary());
+        assertEquals(agreementDTO.fromDate(), agreement.getFromDate());
+        assertEquals(agreementDTO.toDate(), agreement.getToDate());
+        assertEquals(agreementDTO.paymentType(), agreement.getPaymentType());
+        assertEquals(agreementDTO.status(), agreement.getStatus());
+        assertEquals(agreementDTO.employeeId(), agreement.getEmployee().getId());
     }
 
-    void assertCertificates(Set<EmployeeCertificateDTO> certificateDTOS, Set<EmployeeCertificate> employeeCertificates){
+    void assertCertificates(Set<EmployeeCertificateDTO> certificateDTOS, Set<EmployeeCertificate> employeeCertificates) {
         Map<Long, EmployeeCertificate> certificateMap = employeeCertificates.stream()
                 .collect(Collectors.toMap(EmployeeCertificate::getId, agreement -> agreement));
 
@@ -144,15 +146,15 @@ public class EmployeeMapperTest {
         });
     }
 
-    void assertCertificate(EmployeeCertificateDTO employeeCertificateDTO, EmployeeCertificate employeeCertificate){
-        assertEquals(employeeCertificateDTO.certificateName(),employeeCertificate.getCertificateName());
-        assertEquals(employeeCertificateDTO.employeeId(),employeeCertificate.getEmployee().getId());
-        assertEquals(employeeCertificateDTO.expiryDate(),employeeCertificate.getExpiryDate());
-        assertEquals(employeeCertificateDTO.issueDate(),employeeCertificate.getIssueDate());
-        assertEquals(employeeCertificateDTO.issuedBy(),employeeCertificate.getIssuedBy());
+    void assertCertificate(EmployeeCertificateDTO employeeCertificateDTO, EmployeeCertificate employeeCertificate) {
+        assertEquals(employeeCertificateDTO.certificateName(), employeeCertificate.getCertificateName());
+        assertEquals(employeeCertificateDTO.employeeId(), employeeCertificate.getEmployee().getId());
+        assertEquals(employeeCertificateDTO.expiryDate(), employeeCertificate.getExpiryDate());
+        assertEquals(employeeCertificateDTO.issueDate(), employeeCertificate.getIssueDate());
+        assertEquals(employeeCertificateDTO.issuedBy(), employeeCertificate.getIssuedBy());
     }
 
-    void assertEmploymentHistories(List<EmploymentHistoryDTO> employmentHistoryDTOS, List<EmploymentHistory> employmentHistories){
+    void assertEmploymentHistories(List<EmploymentHistoryDTO> employmentHistoryDTOS, List<EmploymentHistory> employmentHistories) {
         Map<Long, EmploymentHistory> certificateMap = employmentHistories.stream()
                 .collect(Collectors.toMap(EmploymentHistory::getId, agreement -> agreement));
 
@@ -163,11 +165,11 @@ public class EmployeeMapperTest {
         });
     }
 
-    void assertEmploymentHistory(EmploymentHistoryDTO employmentHistoryDTO, EmploymentHistory employmentHistory){
-        assertEquals(employmentHistoryDTO.employeeId(),employmentHistory.getEmployee().getId());
-        assertEquals(employmentHistoryDTO.fromDate(),employmentHistory.getFromDate());
-        assertEquals(employmentHistoryDTO.toDate(),employmentHistory.getToDate());
-        assertEquals(employmentHistoryDTO.companyName(),employmentHistory.getCompanyName());
-        assertEquals(employmentHistoryDTO.jobName(),employmentHistory.getJobName());
+    void assertEmploymentHistory(EmploymentHistoryDTO employmentHistoryDTO, EmploymentHistory employmentHistory) {
+        assertEquals(employmentHistoryDTO.employeeId(), employmentHistory.getEmployee().getId());
+        assertEquals(employmentHistoryDTO.fromDate(), employmentHistory.getFromDate());
+        assertEquals(employmentHistoryDTO.toDate(), employmentHistory.getToDate());
+        assertEquals(employmentHistoryDTO.companyName(), employmentHistory.getCompanyName());
+        assertEquals(employmentHistoryDTO.jobName(), employmentHistory.getJobName());
     }
 }
