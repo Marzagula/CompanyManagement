@@ -5,8 +5,8 @@ spring:
     name: employee-server
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: marcin123
+    username: ${CM_DB_USERNAME}
+    password: ${CM_DB_PASSWORD}
     hikari:
       maximum-pool-size: 3
   jpa:
