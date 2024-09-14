@@ -3,7 +3,7 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:postgresql://localhost:5433/postgres
+    url: jdbc:postgresql://localhost:5434/postgres
     username: ${CM_DB_USERNAME}
     password: ${CM_DB_PASSWORD}
 

@@ -52,3 +52,17 @@ services:
       POSTGRES_PASSWORD: ${CM_DB_PASSWORD}
     ports:
       - "5432:5432"
+
+  accounting-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${CM_DB_USERNAME}
+      POSTGRES_PASSWORD: ${CM_DB_PASSWORD}
+    ports:
+      - "5434:5432"
+    volumes:
+      - accounting_db_data:/var/lib/postgresql/data
+      - ./database/accounting/:/docker-entrypoint-initdb.d/
+
+volumes:
+  accounting_db_data:
