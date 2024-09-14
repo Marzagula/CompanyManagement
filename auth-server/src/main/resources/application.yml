@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: auth-server
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: ${CM_DB_USERNAME}
+    password: ${CM_DB_PASSWORD}
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: none
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+  logging:
+    level:
+      org.hibernate.SQL: DEBUG
+      org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+rsa:
+  private-key: classpath:certs/private_key.pem
+  public-key: classpath:certs/public_key.pem
+
+server:
+  port: 9000
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        web: DEBUG
+
+
+eureka:
+  hostname: http://localhost:8761
+  client:
+    serviceUrl:
+      defaultZone:
+        ${EUREKA_URI: ${eureka.hostname}/eureka}
+    registerWithEureka: true
+    registryFetchIntervalSeconds: 10
+    instanceInfoReplicationIntervalSeconds: 10
+    fetchRegistry: true
+  instance:
+    preferIpAddress: true
+    homePageUrl: ${eureka.hostname}
+    statusPageUrl: https://${eureka.hostname}/info
+    healthCheckUrl: https://${eureka.hostname}/health
