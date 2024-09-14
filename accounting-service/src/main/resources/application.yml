@@ -1,0 +1,32 @@
+auth-server: http://localhost:9000
+
+spring:
+  application:
+    name: accounting-service
+  datasource:
+    hikari:
+      maximum-pool-size: 3
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: auth-server
+          jwk-set-uri: ${auth-server}/jwks
+
+rsa:
+  public-key: classpath:certs/public_key.pem
+server:
+  port: 8083
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

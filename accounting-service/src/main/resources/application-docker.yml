@@ -1,0 +1,25 @@
+auth-server: http://auth-server:9000
+
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: jdbc:postgresql://db:5432/postgres
+    username: ${CM_DB_USERNAME}
+    password: ${CM_DB_PASSWORD}
+
+eureka:
+  hostname: http://eureka-server:8761
+  client:
+    serviceUrl:
+      defaultZone: http://eureka-server:8761/eureka
+    registerWithEureka: true
+    registryFetchIntervalSeconds: 10
+    instanceInfoReplicationIntervalSeconds: 10
+    fetchRegistry: true
+  instance:
+    preferIpAddress: true
+    homePageUrl: http://eureka-server:8761
+    statusPageUrl: https://eureka-server:8761/info
+    healthCheckUrl: https://eureka-server:8761/health
