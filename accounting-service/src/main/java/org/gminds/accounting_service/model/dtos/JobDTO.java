@@ -1,7 +1,5 @@
 package org.gminds.accounting_service.model.dtos;
 
-
-
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
