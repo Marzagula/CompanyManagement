@@ -13,7 +13,7 @@ public class ZUSCalculator implements TaxCalculator {
 
     private final TaxRepository taxRepository;
 
-    public ZUSCalculator(TaxRepository taxRepository){
+    public ZUSCalculator(TaxRepository taxRepository) {
         this.taxRepository = taxRepository;
     }
 
@@ -23,12 +23,12 @@ public class ZUSCalculator implements TaxCalculator {
         List<Double> taxPercentages = taxes.stream()
                 .filter(tax ->
                         tax.getTaxType().equals(TaxType.ZUS)
-                        ||tax.getTaxType().equals(TaxType.HEALTH)
+                                || tax.getTaxType().equals(TaxType.HEALTH)
                 )
                 .map(Tax::getPercentage)
                 .toList();
         return taxPercentages.stream()
-                .mapToDouble(taxPercentage -> transaction.getAmount()*(taxPercentage/100))
+                .mapToDouble(taxPercentage -> transaction.getAmount() * (taxPercentage / 100))
                 .sum();
     }
 }

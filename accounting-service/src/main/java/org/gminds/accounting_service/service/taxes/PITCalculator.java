@@ -24,8 +24,8 @@ public class PITCalculator implements TaxCalculator {
                 .filter(tax ->
                         tax.getTaxType().equals(TaxType.ZUS) &&
                                 (tax.getTaxSubtype().equals("emerytalna pracownika")
-                                    || tax.getTaxSubtype().equals("rentowa pracownika")
-                                    || tax.getTaxSubtype().equals("chorobowa")
+                                        || tax.getTaxSubtype().equals("rentowa pracownika")
+                                        || tax.getTaxSubtype().equals("chorobowa")
                                 )
                 )
                 .map(Tax::getPercentage)
@@ -33,7 +33,7 @@ public class PITCalculator implements TaxCalculator {
 
         BigDecimal zusTax = BigDecimal.valueOf(zusPercentages.stream()
                 .mapToDouble(zusPercentage -> transaction.getAmount() * zusPercentage / 100.0)
-                .sum()).setScale(2,RoundingMode.UP);
+                .sum()).setScale(2, RoundingMode.UP);
         BigDecimal predictedZUSYearlyTax = zusTax.multiply(new BigDecimal(12));
 
         Double pitPercentage = taxes.stream()
@@ -52,13 +52,13 @@ public class PITCalculator implements TaxCalculator {
                 .findFirst().orElseThrow()
                 .getPercentage());
 
-        BigDecimal healthTax = BigDecimal.valueOf(healthTaxPercentage-1.25)
-                .multiply(BigDecimal.valueOf(transaction.getAmount()).subtract(zusTax)).setScale(2,RoundingMode.UP)
+        BigDecimal healthTax = BigDecimal.valueOf(healthTaxPercentage - 1.25)
+                .multiply(BigDecimal.valueOf(transaction.getAmount()).subtract(zusTax)).setScale(2, RoundingMode.UP)
                 .divide(new BigDecimal(100)).setScale(2, RoundingMode.UP);
 
 
         return (BigDecimal.valueOf(transaction.getAmount()).subtract(zusTax))
-                .multiply(BigDecimal.valueOf(pitPercentage).divide(BigDecimal.valueOf(100)).setScale(2,RoundingMode.UP))
+                .multiply(BigDecimal.valueOf(pitPercentage).divide(BigDecimal.valueOf(100)).setScale(2, RoundingMode.UP))
                 .subtract(healthTax).doubleValue();
     }
 }

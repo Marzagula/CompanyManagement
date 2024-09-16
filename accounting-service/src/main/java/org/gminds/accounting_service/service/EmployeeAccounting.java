@@ -11,11 +11,11 @@ public class EmployeeAccounting {
 
     final private PaymentRangeRepository paymentRangeRepository;
 
-    public EmployeeAccounting(PaymentRangeRepository paymentRangeRepository){
+    public EmployeeAccounting(PaymentRangeRepository paymentRangeRepository) {
         this.paymentRangeRepository = paymentRangeRepository;
     }
 
-    public List<PaymentRange> findAllPaymentRange(){
+    public List<PaymentRange> findAllPaymentRange() {
         return paymentRangeRepository.findAll().stream().toList();
     }
 }

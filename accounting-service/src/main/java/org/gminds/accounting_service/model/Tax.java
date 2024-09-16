@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import org.gminds.accounting_service.model.enums.TaxType;
 
 @Entity
-public class Tax extends Auditable<String>{
+public class Tax extends Auditable<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

@@ -5,7 +5,7 @@ import org.gminds.accounting_service.model.enums.InvoiceType;
 
 @Entity
 @DiscriminatorValue("INVOICE")
-public class Invoice extends Transaction{
+public class Invoice extends Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

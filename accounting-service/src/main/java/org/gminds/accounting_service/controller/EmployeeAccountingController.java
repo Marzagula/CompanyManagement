@@ -15,12 +15,12 @@ public class EmployeeAccountingController {
 
     private final EmployeeAccounting employeeAccounting;
 
-    public EmployeeAccountingController(EmployeeAccounting employeeAccounting){
+    public EmployeeAccountingController(EmployeeAccounting employeeAccounting) {
         this.employeeAccounting = employeeAccounting;
     }
 
     @GetMapping("/paymentRanges")
-    public ResponseEntity<List<PaymentRange>> findAllPaymentRanges(){
+    public ResponseEntity<List<PaymentRange>> findAllPaymentRanges() {
         return ResponseEntity.ok(this.employeeAccounting.findAllPaymentRange());
     }
 }
