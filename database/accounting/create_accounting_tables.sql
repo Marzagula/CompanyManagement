@@ -50,3 +50,16 @@ CREATE TABLE transaction (
 CREATE INDEX idx_transaction_type ON transaction (transaction_type);
 CREATE INDEX idx_transaction_date ON transaction (transaction_date);
 CREATE INDEX idx_transaction_id ON transaction (id);
+
+
+CREATE TABLE tax (
+    id BIGSERIAL PRIMARY KEY,
+    tax_type VARCHAR(10) NOT NULL, -- Enum TaxType as VARCHAR
+    tax_subtype VARCHAR(255),      -- Optional subtype (e.g., emerytalna, rentowa for ZUS etc.)
+    percentage DOUBLE PRECISION NOT NULL, -- Tax percentage
+    fiscal_year INTEGER NOT NULL, -- Fiscal year
+    created_by VARCHAR(255),
+    created_date TIMESTAMP,
+    last_modified_by VARCHAR(255),
+    last_modified_date TIMESTAMP
+);
