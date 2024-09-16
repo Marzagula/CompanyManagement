@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
-public class PITCalculator implements TaxCalculator {
+public class PITCalculator implements TaxCalculator<Salary>  {
 
     private final TaxRepository taxRepository;
 
@@ -26,13 +26,8 @@ public class PITCalculator implements TaxCalculator {
        4. subtypy skladek moga byc inne w kolejnych latach podatkowych, trzeba to jakos obsluzyc
     */
     @Override
-    public Double calculateTax(Transaction transaction) {
-        Salary salary = null;
-        if (transaction instanceof Salary) {
-            salary = (Salary) transaction;
-        } else {
-            throw new RuntimeException("Transaction should be Salary type but it's not.");
-        }
+    public Double calculateTax(Salary transaction) {
+
         List<Tax> taxes = taxRepository.findByFiscalYear(transaction.getTransactionDate().getYear());
         List<Double> zusPercentages = taxes.stream()
                 .filter(tax ->

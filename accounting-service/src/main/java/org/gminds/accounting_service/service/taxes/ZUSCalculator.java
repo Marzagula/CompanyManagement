@@ -1,5 +1,6 @@
 package org.gminds.accounting_service.service.taxes;
 
+import org.gminds.accounting_service.model.Salary;
 import org.gminds.accounting_service.model.Tax;
 import org.gminds.accounting_service.model.Transaction;
 import org.gminds.accounting_service.model.enums.TaxType;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ZUSCalculator implements TaxCalculator {
+public class ZUSCalculator implements TaxCalculator<Salary> {
 
     private final TaxRepository taxRepository;
 
@@ -18,7 +19,7 @@ public class ZUSCalculator implements TaxCalculator {
     }
 
     @Override
-    public Double calculateTax(Transaction transaction) {
+    public Double calculateTax(Salary transaction) {
         List<Tax> taxes = taxRepository.findByFiscalYear(transaction.getTransactionDate().getYear());
         List<Double> taxPercentages = taxes.stream()
                 .filter(tax ->
