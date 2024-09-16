@@ -41,9 +41,7 @@ public class AccountingServiceApplicationTests {
         salary.setAmount(10000.0);
         salary.setTransactionDate(LocalDate.ofYearDay(2024, 15));
 
-        List<Tax> taxes = taxes2024();
-
-        when(taxRepository.findByFiscalYear(2024)).thenReturn(taxes);
+        when(taxRepository.findByFiscalYear(2024)).thenReturn(taxes2024());
         Double taxAmount = zusProcessor.calculateTax(salary);
         assertEquals(4319.0, taxAmount);
     }
@@ -54,9 +52,7 @@ public class AccountingServiceApplicationTests {
         salary.setAmount(10000.0);
         salary.setTransactionDate(LocalDate.ofYearDay(2024, 15));
 
-        List<Tax> taxes = taxes2024();
-
-        when(taxRepository.findByFiscalYear(2024)).thenReturn(taxes);
+        when(taxRepository.findByFiscalYear(2024)).thenReturn(taxes2024());
         Double taxAmount = pitCalculator.calculateTax(salary);
         assertEquals(798.18, taxAmount);
     }
