@@ -2,7 +2,6 @@ package org.gminds.accounting_service.service.taxes;
 
 import org.gminds.accounting_service.model.Salary;
 import org.gminds.accounting_service.model.Tax;
-import org.gminds.accounting_service.model.Transaction;
 import org.gminds.accounting_service.model.enums.TaxType;
 import org.gminds.accounting_service.repository.TaxRepository;
 
@@ -10,7 +9,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
-public class PITCalculator implements TaxCalculator<Salary>  {
+public class PITCalculator implements TaxCalculator<Salary> {
 
     private final TaxRepository taxRepository;
 
@@ -50,8 +49,8 @@ public class PITCalculator implements TaxCalculator<Salary>  {
                         tax.getTaxType().equals(TaxType.PIT) &&
                                 (
                                         tax.getTaxSubtype() != null &&
-                                                (transaction.getAmount()*12-predictedZUSYearlyTax.doubleValue() <= 120000.0 ? "first_bracket" : "second_bracket").equals(tax.getTaxSubtype())
-                                                //(predictedYearlyIncome.compareTo(BigDecimal.valueOf(120000))<=0 ? "first_bracket" : "second_bracket").equals(tax.getTaxSubtype()) //docelowa linijka
+                                                (transaction.getAmount() * 12 - predictedZUSYearlyTax.doubleValue() <= 120000.0 ? "first_bracket" : "second_bracket").equals(tax.getTaxSubtype())
+                                        //(predictedYearlyIncome.compareTo(BigDecimal.valueOf(120000))<=0 ? "first_bracket" : "second_bracket").equals(tax.getTaxSubtype()) //docelowa linijka
                                 )
                 )
                 .map(Tax::getPercentage)
@@ -74,7 +73,7 @@ public class PITCalculator implements TaxCalculator<Salary>  {
 
 
     /*TODO tu bedzie logika odpowiadajaca za sprawdzenie wszystkich wyplat pracownika z tego roku i przewidzenie rocznego dochodu*/
-    BigDecimal predictionOfYearyIncome(Salary salary){
+    BigDecimal predictionOfYearyIncome(Salary salary) {
         return new BigDecimal(0);
     }
 }

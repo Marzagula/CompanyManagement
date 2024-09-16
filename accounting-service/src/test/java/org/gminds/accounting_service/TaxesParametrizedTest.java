@@ -9,24 +9,43 @@ import org.gminds.accounting_service.service.taxes.ZUSCalculator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-public class AccountingServiceApplicationTests {
+@RunWith(Parameterized.class)
+public class TaxesParametrizedTest {
+
+    @Parameterized.Parameter(0)
+    public double incomeAmount;
+    @Parameterized.Parameter(1)
+    public double expectedZUSTax;
+    @Parameterized.Parameter(2)
+    public double expectedPITTax;
+    @Parameterized.Parameter(3)
+    public int fiscalYear;
 
     @Mock
     TaxRepository taxRepository;
     ZUSCalculator zusProcessor;
     PITCalculator pitCalculator;
+
+    @Parameterized.Parameters(name = "{index}: Test with salary={0}, expectedZusTax={1}, expectedPitTax={2}, fiscalYear={3}")
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][]{
+                {10000, 4319.0, 798.18, 2024},
+                {20000, 8638.0, 4185.06, 2024}
+        });
+    }
 
     @Before
     public void setUp() {
@@ -35,26 +54,19 @@ public class AccountingServiceApplicationTests {
         this.pitCalculator = new PITCalculator(taxRepository);
     }
 
-    @Test
-    public void ZUSAndHealth2024CalculateTest() {
-        Salary salary = new Salary();
-        salary.setAmount(10000.0);
-        salary.setTransactionDate(LocalDate.ofYearDay(2024, 15));
-
-        when(taxRepository.findByFiscalYear(2024)).thenReturn(taxes2024());
-        Double taxAmount = zusProcessor.calculateTax(salary);
-        assertEquals(4319.0, taxAmount);
-    }
 
     @Test
-    public void PIT2024CalculateTest() {
+    public void TaxesCalculateTest() {
         Salary salary = new Salary();
-        salary.setAmount(10000.0);
-        salary.setTransactionDate(LocalDate.ofYearDay(2024, 15));
+        salary.setAmount(incomeAmount);
+        salary.setTransactionDate(LocalDate.ofYearDay(fiscalYear, 15));
 
-        when(taxRepository.findByFiscalYear(2024)).thenReturn(taxes2024());
-        Double taxAmount = pitCalculator.calculateTax(salary);
-        assertEquals(798.18, taxAmount);
+        when(taxRepository.findByFiscalYear(fiscalYear)).thenReturn(taxes2024());
+        Double zusTaxAmount = zusProcessor.calculateTax(salary);
+        assertEquals(expectedZUSTax, zusTaxAmount);
+
+        Double pitTaxAmount = pitCalculator.calculateTax(salary);
+        assertEquals(expectedPITTax, pitTaxAmount);
     }
 
     List<Tax> taxes2024() {
