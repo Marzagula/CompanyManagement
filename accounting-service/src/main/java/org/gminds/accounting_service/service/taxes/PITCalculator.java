@@ -44,7 +44,7 @@ public class PITCalculator implements TaxCalculator<Salary>  {
                 .mapToDouble(zusPercentage -> transaction.getAmount() * zusPercentage / 100.0)
                 .sum()).setScale(2, RoundingMode.UP);
         BigDecimal predictedZUSYearlyTax = zusTax.multiply(new BigDecimal(12));
-        BigDecimal predictedYearlyIncome = predictionOfYearyIncome(salary);
+        BigDecimal predictedYearlyIncome = predictionOfYearyIncome(transaction);
         Double pitPercentage = taxes.stream()
                 .filter(tax ->
                         tax.getTaxType().equals(TaxType.PIT) &&
