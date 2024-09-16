@@ -13,7 +13,7 @@ VALUES
 -- Podatek dochodowy PIT (pierwszy próg 17%, drugi próg 32%)
 INSERT INTO tax (tax_type, tax_subtype, percentage, fiscal_year, created_date, last_modified_date)
 VALUES
-('PIT', 'first_bracket', 17.00, 2024, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('PIT', 'first_bracket', 12.00, 2024, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('PIT', 'second_bracket', 32.00, 2024, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Składka zdrowotna

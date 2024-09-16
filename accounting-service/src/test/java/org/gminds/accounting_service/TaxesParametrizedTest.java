@@ -138,7 +138,7 @@ public class TaxesParametrizedTest {
         zus9.setTaxType(TaxType.PIT);
         zus9.setTaxSubtype("first_bracket");
         zus9.setFiscalYear(2024);
-        zus9.setPercentage(17.0);
+        zus9.setPercentage(12.0);
         taxes.add(zus9);
 
         Tax zus10 = new Tax();

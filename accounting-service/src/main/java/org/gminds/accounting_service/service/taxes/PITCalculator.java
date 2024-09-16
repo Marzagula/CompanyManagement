@@ -23,6 +23,9 @@ public class PITCalculator implements TaxCalculator<Salary> {
        2. progi podatkowe nie powinny byc zaharcodowane, trzeba bedzie umiescic je w bazie
        3. obecnie mozna odliczyc 7,75 z 9 procent skladki zdrowotnej(stąd odjęcie 1.25 w healthTax) ale ta wartosc sie bedzie zmieniac, trzeba to jakos obsluzyc
        4. subtypy skladek moga byc inne w kolejnych latach podatkowych, trzeba to jakos obsluzyc
+       5. algorytm podatkowy musi dzialac progresywnie (do 120000 17% a i powyzej 32%) obecnie jest staly
+       6. trzeba wziac pod uwage kwote wolna od podatku
+       7. trzeba wziac pod uwage to czy podatnik ma skonczone 26 lat
     */
     @Override
     public Double calculateTax(Salary transaction) {
@@ -64,7 +67,6 @@ public class PITCalculator implements TaxCalculator<Salary> {
         BigDecimal healthTax = BigDecimal.valueOf(healthTaxPercentage - 1.25)
                 .multiply(BigDecimal.valueOf(transaction.getAmount()).subtract(zusTax)).setScale(2, RoundingMode.UP)
                 .divide(new BigDecimal(100)).setScale(2, RoundingMode.UP);
-
 
         return (BigDecimal.valueOf(transaction.getAmount()).subtract(zusTax))
                 .multiply(BigDecimal.valueOf(pitPercentage).divide(BigDecimal.valueOf(100)).setScale(2, RoundingMode.UP))
