@@ -1,0 +1,11 @@
+spring:
+  config:
+    activate:
+      on-profile: debug-security
+
+logging:
+  level:
+    root: INFO
+    org.springframework.security: DEBUG    # Logowanie dla całego Spring Security
+    org.springframework.security.oauth2: DEBUG   # Logowanie szczegółowe dla OAuth2
+    org.springframework.security.web: DEBUG      # Logowanie dla komponentów webowych Spring Security
