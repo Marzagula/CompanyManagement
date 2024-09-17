@@ -1,0 +1,17 @@
+spring:
+  config:
+    activate:
+      on-profile: debug-spring
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG         # Logowanie dla kontrolerów webowych
+    org.springframework.context: DEBUG     # Logowanie dla kontekstu aplikacji
+    org.springframework.aop: DEBUG         # Logowanie dla Spring AOP
+    org.springframework.integration: DEBUG # Logowanie dla Spring Integration
+    org.springframework.cache: DEBUG       # Logowanie operacji związanych z cache
+    org.thymeleaf: DEBUG                   # Logowanie dla Thymeleaf
+    org.springframework.transaction: DEBUG # Logowanie dla zarządzania transakcjami
+
+    com.gminds.employee_service: DEBUG     # Logowanie dla loggerow ustawionych w employee-service

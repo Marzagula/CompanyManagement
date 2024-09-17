@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: debug-database
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: DEBUG               # Logowanie zapytań SQL
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # Logowanie parametrów zapytań
+    org.hibernate.type: TRACE              # Logowanie konwersji typów danych
+    com.zaxxer.hikari: DEBUG               # Logowanie dla HikariCP (pula połączeń)
+    org.springframework.jdbc.core: DEBUG   # Logowanie dla Spring JDBC

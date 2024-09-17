@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: employee-server-test
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:tc:postgresql:15:///testdb?TC_INITSCRIPT=schema.sql
+    username: test
+    password: test
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    schema: classpath:schema.sql
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+server:
+  port: 8602
+
+  eureka:
+    client:
+      enabled: false
+  instance:
+    preferIpAddress: true

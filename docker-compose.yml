@@ -1,40 +1,59 @@
-version: '3'
 services:
   eureka-server:
-    build: ./eureka-server  # Budowanie obrazu z katalogu eureka-server
+    build: ./eureka-server
     ports:
       - "8761:8761"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
 
   auth-server:
-    build: ./auth-server  # Budowanie obrazu z katalogu auth-server
+    build: ./auth-server
     ports:
       - "9000:9000"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
-      - spring.datasource.url=jdbc:postgresql://db:5432/postgres
-
+      - spring.datasource.url=jdbc:postgresql://auth-db:5432/postgres
+      - CM_DB_USERNAME=${CM_DB_USERNAME}
+      - CM_DB_PASSWORD=${CM_DB_PASSWORD}
     depends_on:
       - eureka-server
 
   employee-service:
-    build: ./employee-service  # Budowanie obrazu z katalogu employee-service
+    build: ./employee-service
     ports:
       - "8082:8082"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
-      - spring.datasource.url=jdbc:postgresql://db:5432/postgres
-
+      - spring.datasource.url=jdbc:postgresql://employee-db:5432/postgres
+      - CM_DB_USERNAME=${CM_DB_USERNAME}
+      - CM_DB_PASSWORD=${CM_DB_PASSWORD}
     depends_on:
       - eureka-server
 
-  db:
+  auth-db:
     image: postgres:latest
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: marcin123
+      POSTGRES_USER: ${CM_DB_USERNAME}
+      POSTGRES_PASSWORD: ${CM_DB_PASSWORD}
     ports:
       - "5432:5432"
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data
+      - ./database/auth/:/docker-entrypoint-initdb.d/
+
+  employee-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${CM_DB_USERNAME}
+      POSTGRES_PASSWORD: ${CM_DB_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - employee_db_data:/var/lib/postgresql/data
+      - ./database/employee/:/docker-entrypoint-initdb.d/
+
+volumes:
+  auth_db_data:
+  employee_db_data:
