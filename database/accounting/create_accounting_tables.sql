@@ -36,6 +36,7 @@ CREATE TABLE transaction (
     transaction_date DATE,
     description VARCHAR(255),
     counterparty VARCHAR(255),
+    tax_category VARCHAR(10) NOT NULL,
     invoice_number VARCHAR(255),
     vat_tax DOUBLE PRECISION,
     amount DECIMAL(19,2),
@@ -54,12 +55,23 @@ CREATE INDEX idx_transaction_id ON transaction (id);
 
 CREATE TABLE tax (
     id BIGSERIAL PRIMARY KEY,
-    tax_type VARCHAR(10) NOT NULL, -- Enum TaxType as VARCHAR
-    tax_subtype VARCHAR(255),      -- Optional subtype (e.g., emerytalna, rentowa for ZUS etc.)
+    tax_category VARCHAR(10) NOT NULL, -- Enum TaxType as VARCHAR
+    tax_subcategory VARCHAR(255),      -- Optional subtype (e.g., emerytalna, rentowa for ZUS etc.)
     percentage DOUBLE PRECISION NOT NULL, -- Tax percentage
     fiscal_year INTEGER NOT NULL, -- Fiscal year
     created_by VARCHAR(255),
     created_date TIMESTAMP,
     last_modified_by VARCHAR(255),
     last_modified_date TIMESTAMP
+);
+
+CREATE TABLE fiscal_value (
+    id SERIAL PRIMARY KEY,
+    fiscalYear INT NOT NULL,
+    taxType VARCHAR(20) NOT NULL,
+    taxSubtype VARCHAR(50),
+    percentage NUMERIC(5, 2),
+    limitValue NUMERIC(10, 2),
+    limitCondition VARCHAR(20),
+    description TEXT
 );

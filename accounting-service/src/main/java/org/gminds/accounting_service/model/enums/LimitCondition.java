@@ -1,11 +1,11 @@
 package org.gminds.accounting_service.model.enums;
 
-public enum TaxType {
-    TAX_BRACKET("TAX_BRACKET"), TAX_DEDUCTION("TAX_DEDUCTION"), COST("COST"), LIMIT("LIMIT");
+public enum LimitCondition {
+    LESS("LESS"), LESS_EQUAL("LESS_EQUAL"), EQUAL("EQUAL"), MORE_EQUAL("MORE_EQUAL"), MORE("MORE"),;
 
     private final String name;
 
-    TaxType(String s) {
+    LimitCondition(String s) {
         name = s;
     }
 

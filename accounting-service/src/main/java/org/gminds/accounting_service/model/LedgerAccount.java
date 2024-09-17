@@ -6,6 +6,7 @@ import org.gminds.accounting_service.model.enums.LedgerAccountPlan;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,7 +19,7 @@ public class LedgerAccount extends Auditable<String> {
     @Enumerated(EnumType.STRING)
     LedgerAccountPlan plan;
     @OneToMany(mappedBy = "ledgerAccount", cascade = CascadeType.ALL)
-    List<Transaction> transactions;
+    List<Transaction> transactions = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     Currency currency;
     BigDecimal balance;

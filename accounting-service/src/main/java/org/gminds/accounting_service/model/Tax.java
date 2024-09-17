@@ -4,15 +4,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import org.gminds.accounting_service.model.enums.TaxType;
+import org.gminds.accounting_service.model.enums.TaxCategory;
 
 @Entity
 public class Tax extends Auditable<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    TaxType taxType;
-    String taxSubtype;
+    TaxCategory taxCategory;
+    String taxSubcategory;
     Double percentage;
     Integer fiscalYear;
 
@@ -24,20 +24,20 @@ public class Tax extends Auditable<String> {
         this.id = id;
     }
 
-    public TaxType getTaxType() {
-        return taxType;
+    public TaxCategory getTaxCategory() {
+        return taxCategory;
     }
 
-    public void setTaxType(TaxType taxType) {
-        this.taxType = taxType;
+    public void setTaxCategory(TaxCategory taxCategory) {
+        this.taxCategory = taxCategory;
     }
 
-    public String getTaxSubtype() {
-        return taxSubtype;
+    public String getTaxSubcategory() {
+        return taxSubcategory;
     }
 
-    public void setTaxSubtype(String taxSubtype) {
-        this.taxSubtype = taxSubtype;
+    public void setTaxSubcategory(String taxSubcategory) {
+        this.taxSubcategory = taxSubcategory;
     }
 
     public Double getPercentage() {
