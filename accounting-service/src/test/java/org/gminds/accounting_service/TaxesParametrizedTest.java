@@ -1,9 +1,6 @@
 package org.gminds.accounting_service;
 
-import org.gminds.accounting_service.model.FiscalValue;
-import org.gminds.accounting_service.model.LedgerAccount;
-import org.gminds.accounting_service.model.Salary;
-import org.gminds.accounting_service.model.Tax;
+import org.gminds.accounting_service.model.*;
 import org.gminds.accounting_service.model.enums.Currency;
 import org.gminds.accounting_service.model.enums.LimitCondition;
 import org.gminds.accounting_service.model.enums.TaxCategory;
@@ -57,7 +54,7 @@ public class TaxesParametrizedTest {
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
                 {10000, 4319.0, 705.0, 2024},
-                {20000, 8638.0, 3159.0, 2024},
+                {20000, 8638.0, 3162.0, 2024},
                 {18000, 7774.0, 2590.0, 2024},
                 {17000, 7342.0, 2314.0, 2024},
                 {15000, 6479.0, 1762.0, 2024},
@@ -65,8 +62,10 @@ public class TaxesParametrizedTest {
                 {32000, 13821.0, 7002.0, 2024},
                 {40000, 17276.0, 9562.0, 2024},
                 {120000, 51828.0, 35162.0, 2024},
-                {130000, 56147.0, 38362.0, 2024}
-
+                {130000, 56147.0, 38362.0, 2024},
+                {30000, 12957.0, 6362.0, 2024},
+                {16687, 7207.0, 2228.0, 2024},
+                {250000, 107975.0, 76762.0, 2024},
 
         });
     }
@@ -238,13 +237,27 @@ public class TaxesParametrizedTest {
         salary.setAmount(incomeAmount);
         salary.setEmployeeId(3L);
 
+        TaxTransaction zus1 = new TaxTransaction();
+        zus1.setTaxBase(incomeAmount);
+        zus1.setTaxCategory(TaxCategory.ZUS);
+        zus1.setAmount(incomeAmount*0.1371);
+        zus1.setEmployeeId(3L);
+
         Salary salary2 = new Salary();
         salary2.setTransactionDate(LocalDate.of(2024, Month.FEBRUARY,1));
         salary2.setAmount(incomeAmount);
         salary2.setEmployeeId(3L);
 
+        TaxTransaction zus2 = new TaxTransaction();
+        zus2.setTaxBase(incomeAmount);
+        zus2.setTaxCategory(TaxCategory.ZUS);
+        zus2.setAmount(incomeAmount*0.1371);
+        zus2.setEmployeeId(3L);
+
         ledgerAccount.getTransactions().add(salary);
+        ledgerAccount.getTransactions().add(zus1);
         ledgerAccount.getTransactions().add(salary2);
+        ledgerAccount.getTransactions().add(zus2);
         ledgerAccount.setBalance(BigDecimal.valueOf(salary.getAmount()+salary2.getAmount()));
 
         return ledgerAccount;

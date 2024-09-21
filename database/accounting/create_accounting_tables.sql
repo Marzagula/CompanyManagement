@@ -37,6 +37,7 @@ CREATE TABLE transaction (
     description VARCHAR(255),
     counterparty VARCHAR(255),
     tax_category VARCHAR(10) NOT NULL,
+    tax_base amount DECIMAL(19,2),
     invoice_number VARCHAR(255),
     vat_tax DOUBLE PRECISION,
     amount DECIMAL(19,2),
