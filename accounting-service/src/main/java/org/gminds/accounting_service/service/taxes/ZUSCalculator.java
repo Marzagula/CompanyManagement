@@ -22,12 +22,12 @@ public class ZUSCalculator implements TaxCalculator<Salary> {
     @Override
     public Double calculateTax(Salary transaction) {
         List<Tax> taxes = taxRepository.findByFiscalYear(transaction.getTransactionDate().getYear());
-        return  BigDecimal.valueOf(taxes.stream()
+        return taxes.stream()
                 .filter(tax -> tax.getTaxCategory().equals(TaxCategory.ZUS) || tax.getTaxCategory().equals(TaxCategory.HEALTH))
                 .map(tax -> BigDecimal.valueOf(transaction.getAmount())
-                        .multiply(BigDecimal.valueOf(tax.getPercentage()).divide(BigDecimal.valueOf(100)))
-                        .setScale(2, RoundingMode.HALF_UP))
-                .mapToDouble(BigDecimal::doubleValue)
-                .sum()).setScale(0,RoundingMode.HALF_UP).doubleValue();
+                        .multiply(BigDecimal.valueOf(tax.getPercentage()).divide(BigDecimal.valueOf(100),2,RoundingMode.HALF_UP))
+                )
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(0, RoundingMode.HALF_UP).doubleValue();
     }
 }

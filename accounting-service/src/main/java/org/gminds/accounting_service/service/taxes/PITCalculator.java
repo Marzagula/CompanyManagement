@@ -3,9 +3,7 @@ package org.gminds.accounting_service.service.taxes;
 import org.gminds.accounting_service.model.FiscalValue;
 import org.gminds.accounting_service.model.Salary;
 import org.gminds.accounting_service.model.Tax;
-import org.gminds.accounting_service.model.TaxTransaction;
 import org.gminds.accounting_service.model.enums.TaxCategory;
-import org.gminds.accounting_service.model.enums.TaxStage;
 import org.gminds.accounting_service.repository.FiscalValuesRepository;
 import org.gminds.accounting_service.repository.LedgerAccountRepository;
 import org.gminds.accounting_service.repository.TaxRepository;
@@ -61,7 +59,7 @@ public class PITCalculator implements TaxCalculator<Salary> {
         BigDecimal currentIncomeBasedSummary = BigDecimal.ZERO;
         for (Salary s : salaries) {
             currentIncome = currentIncome.add(BigDecimal.valueOf(s.getAmount()));
-            predictedYearlyPitTax = predictedYearlyPitTax.add(getMonthlyPit( currentZusBaseSummary, currentIncomeBasedSummary, BigDecimal.valueOf(salary.getAmount()), s.getTransactionDate().getMonthValue()));
+            predictedYearlyPitTax = predictedYearlyPitTax.add(getMonthlyPit(currentZusBaseSummary, currentIncomeBasedSummary, BigDecimal.valueOf(salary.getAmount()), s.getTransactionDate().getMonthValue()));
             currentIncomeBasedSummary = currentIncomeBasedSummary.add(
                     BigDecimal.valueOf(s.getAmount())
                             .subtract(getZusTax(BigDecimal.valueOf(s.getAmount()),
@@ -100,92 +98,80 @@ public class PITCalculator implements TaxCalculator<Salary> {
         taxes = taxRepository.findByFiscalYear(year);
     }
 
-    BigDecimal getMonthlyPit(BigDecimal currentZusSummary, BigDecimal currentIncomeBasedSummary, BigDecimal incomeInCurrentMonth, int currentMontNo) {
+    BigDecimal getMonthlyPit(BigDecimal currentZusSummary, BigDecimal currentIncomeBasedSummary, BigDecimal incomeInCurrentMonth, int currentMonthNo) {
 
-        Map<String, Double> pitPercentages = taxes.stream()
-                .filter(tax -> tax.getTaxCategory().equals(TaxCategory.PIT))
-                .collect(Collectors.toMap(Tax::getTaxSubcategory, Tax::getPercentage));
+        BigDecimal zusTax = getZusTax(incomeInCurrentMonth, currentZusSummary, currentMonthNo);
+        BigDecimal adjustedIncome = incomeInCurrentMonth.subtract(zusTax).subtract(BigDecimal.valueOf(fiscalValues.get("employee_costs")));
+        BigDecimal monthlyDeduction = BigDecimal.valueOf(fiscalValues.get("maximum_deduction")).divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP);
+        BigDecimal calculatedTax;
 
+        BigDecimal firstBracketPercentage = taxes.stream()
+                .filter(tax -> tax.getTaxCategory().equals(TaxCategory.PIT) && tax.getTaxSubcategory().equals("first_bracket"))
+                .map(Tax::getPercentage)
+                .map(BigDecimal::valueOf)  // Konwersja na BigDecimal
+                .findFirst()
+                .orElse(BigDecimal.ZERO);  // Domyślnie 0, jeśli nie znaleziono
 
-        BigDecimal zusTax = getZusTax(incomeInCurrentMonth, currentZusSummary, currentMontNo);
-        BigDecimal tax = BigDecimal.ZERO;
-        BigDecimal nextIncomeBasedSummary = currentIncomeBasedSummary.add(incomeInCurrentMonth.subtract(zusTax).subtract(BigDecimal.valueOf(fiscalValues.get("employee_costs"))));
+        BigDecimal secondBracketPercentage = taxes.stream()
+                .filter(tax -> tax.getTaxCategory().equals(TaxCategory.PIT) && tax.getTaxSubcategory().equals("second_bracket"))
+                .map(Tax::getPercentage)
+                .map(BigDecimal::valueOf)  // Konwersja na BigDecimal
+                .findFirst()
+                .orElse(BigDecimal.ZERO);
 
-        TaxStage taxStage = TaxStage.BEFORE_THRESHOLD;
-        if (currentIncomeBasedSummary.compareTo(BigDecimal.valueOf(fiscalValues.get("first_bracket"))) < 0
-                && nextIncomeBasedSummary
-                .compareTo(BigDecimal.valueOf(fiscalValues.get("first_bracket"))) > 0)
-            taxStage = TaxStage.EXCEEDING_THESHOLD;
-        else if (currentIncomeBasedSummary.compareTo(BigDecimal.valueOf(fiscalValues.get("first_bracket"))) > 0)
-            taxStage = TaxStage.AFTER_THRESHOLD;
+        BigDecimal nextIncomeBasedSummary = currentIncomeBasedSummary.add(adjustedIncome);
 
+        if (currentIncomeBasedSummary.compareTo(BigDecimal.valueOf(fiscalValues.get("first_bracket"))) > 0) {
+            calculatedTax = adjustedIncome
+                    .multiply(secondBracketPercentage)
+                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+        } else if (nextIncomeBasedSummary.compareTo(BigDecimal.valueOf(fiscalValues.get("first_bracket"))) > 0) {
+            BigDecimal splitFirstBracket = BigDecimal.valueOf(fiscalValues.get("first_bracket")).subtract(currentIncomeBasedSummary);
+            BigDecimal difference = nextIncomeBasedSummary.subtract(BigDecimal.valueOf(fiscalValues.get("first_bracket")));
 
-        if (taxStage.equals(TaxStage.BEFORE_THRESHOLD)) {
-            tax = tax.add(incomeInCurrentMonth.subtract(zusTax).subtract(BigDecimal.valueOf(fiscalValues.get("employee_costs")))
-                    .multiply(BigDecimal.valueOf(pitPercentages.get("first_bracket")))
+            calculatedTax = splitFirstBracket
+                    .multiply(firstBracketPercentage)
                     .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)
-            ).subtract(BigDecimal.valueOf(fiscalValues.get("maximum_deduction"))
-                    .divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP)).setScale(0, RoundingMode.HALF_UP);
-        } else if (taxStage.equals(TaxStage.EXCEEDING_THESHOLD)) {
-
-            BigDecimal difference = nextIncomeBasedSummary.subtract(BigDecimal.valueOf(fiscalValues.get("first_bracket"))).setScale(0, RoundingMode.HALF_UP);
-            BigDecimal splitFirst = BigDecimal.valueOf(fiscalValues.get("first_bracket")).subtract(currentIncomeBasedSummary);
-
-            tax = tax
-                    .add(splitFirst
-                            .multiply(BigDecimal.valueOf(pitPercentages.get("first_bracket")))
-                            .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)
-                    )
-                    .add(difference
-                            .multiply(BigDecimal.valueOf(pitPercentages.get("second_bracket"))
-                                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)))
-                    .subtract(BigDecimal.valueOf(fiscalValues.get("maximum_deduction"))
-                            .divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP))
-                    .setScale(0, RoundingMode.HALF_UP);
+                    .add(difference.multiply(secondBracketPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
         } else {
-            tax = tax.add(
-                            (incomeInCurrentMonth
-                                    .subtract(zusTax)
-                                    .subtract(BigDecimal.valueOf(fiscalValues.get("employee_costs"))))
-                                    .multiply(BigDecimal.valueOf(pitPercentages.get("second_bracket")).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)))
-                    .subtract(BigDecimal.valueOf(fiscalValues.get("maximum_deduction"))
-                            .divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP)).setScale(0, RoundingMode.HALF_UP);
+            calculatedTax = adjustedIncome
+                    .multiply(firstBracketPercentage)
+                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
         }
 
-        return tax;
+        return calculatedTax.subtract(monthlyDeduction).setScale(0, RoundingMode.HALF_UP);
     }
 
+
     BigDecimal getZusTax(BigDecimal income, BigDecimal zusBaseSummary, int monthNo) {
+        BigDecimal retirementLimit = BigDecimal.valueOf(fiscalValues.get("retirement_contribution_limit"));
         BigDecimal zusTaxBase;
-        List<Double> zusPercentages = taxes.stream()
-                .filter(tax ->
-                        tax.getTaxCategory().equals(TaxCategory.ZUS) &&
-                                (tax.getTaxSubcategory().equals("emerytalna pracownika")
-                                        || tax.getTaxSubcategory().equals("rentowa pracownika")
-                                        || tax.getTaxSubcategory().equals("chorobowa")
-                                )
+
+        List<BigDecimal> zusPercentages = taxes.stream()
+                .filter(tax -> tax.getTaxCategory().equals(TaxCategory.ZUS) &&
+                        (tax.getTaxSubcategory().equals("emerytalna pracownika") ||
+                                tax.getTaxSubcategory().equals("rentowa pracownika") ||
+                                tax.getTaxSubcategory().equals("chorobowa"))
                 )
-                .map(Tax::getPercentage)
+                .map(tax -> BigDecimal.valueOf(tax.getPercentage()))  // Konwersja do BigDecimal
                 .toList();
 
-
-        if (zusBaseSummary.compareTo(BigDecimal.valueOf(fiscalValues.get("retirement_contribution_limit"))) <= 0
-                && income.multiply(BigDecimal.valueOf(monthNo))
-                .compareTo(BigDecimal.valueOf(fiscalValues.get("retirement_contribution_limit"))) == 1) {
-            zusTaxBase = BigDecimal.valueOf(fiscalValues.get("retirement_contribution_limit")).subtract(zusBaseSummary);
-        } else if (zusBaseSummary.compareTo(BigDecimal.valueOf(fiscalValues.get("retirement_contribution_limit"))) == 1
-        ) {
+        if (zusBaseSummary.compareTo(retirementLimit) <= 0 &&
+                income.multiply(BigDecimal.valueOf(monthNo)).compareTo(retirementLimit) == 1) {
+            zusTaxBase = retirementLimit.subtract(zusBaseSummary);
+        } else if (zusBaseSummary.compareTo(retirementLimit) > 0) {
             zusTaxBase = BigDecimal.ZERO;
-        } else if (income.compareTo(BigDecimal.valueOf(fiscalValues.get("retirement_contribution_limit"))) == 1) {
-            zusTaxBase = BigDecimal.valueOf(fiscalValues.get("retirement_contribution_limit"));
-        } else
+        } else if (income.compareTo(retirementLimit) > 0) {
+            zusTaxBase = retirementLimit;
+        } else {
             zusTaxBase = income;
+        }
 
-        BigDecimal finalZusTaxBase = zusTaxBase;
-        return BigDecimal.valueOf(zusPercentages.stream()
-                        .mapToDouble(zusPercentage -> finalZusTaxBase.multiply(BigDecimal.valueOf(zusPercentage / 100.0)).doubleValue())
-                        .sum()).setScale(2, RoundingMode.HALF_UP)
-                .setScale(0, RoundingMode.HALF_UP);
+        BigDecimal zusTax = zusPercentages.stream()
+                .map(percentage -> zusTaxBase.multiply(percentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return zusTax.setScale(0, RoundingMode.HALF_UP);
     }
 
 

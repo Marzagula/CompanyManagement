@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import org.gminds.accounting_service.model.enums.TaxCategory;
 
 @Entity
-public class TaxTransaction extends Transaction{
+public class TaxTransaction extends Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

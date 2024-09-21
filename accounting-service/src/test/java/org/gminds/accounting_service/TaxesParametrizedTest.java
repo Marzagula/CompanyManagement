@@ -74,7 +74,7 @@ public class TaxesParametrizedTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         this.zusProcessor = new ZUSCalculator(taxRepository);
-        this.pitCalculator = new PITCalculator(taxRepository, fiscalValuesRepository,ledgerAccountRepository);
+        this.pitCalculator = new PITCalculator(taxRepository, fiscalValuesRepository, ledgerAccountRepository);
     }
 
 
@@ -83,7 +83,7 @@ public class TaxesParametrizedTest {
         Salary salary = new Salary();
         salary.setAmount(incomeAmount);
         salary.setEmployeeId(3L);
-        salary.setTransactionDate(LocalDate.of(2024, Month.MARCH,1));
+        salary.setTransactionDate(LocalDate.of(2024, Month.MARCH, 1));
 
         when(taxRepository.findByFiscalYear(fiscalYear)).thenReturn(taxes2024());
         when(fiscalValuesRepository.findByFiscalYear(fiscalYear)).thenReturn(fiscalValues2024());
@@ -224,7 +224,7 @@ public class TaxesParametrizedTest {
         return taxes;
     }
 
-    LedgerAccount uopLedgerAccount(){
+    LedgerAccount uopLedgerAccount() {
         LedgerAccount ledgerAccount = new LedgerAccount();
         ledgerAccount.setAccountName("UOP");
         ledgerAccount.setAccountNumber("12345");
@@ -233,32 +233,32 @@ public class TaxesParametrizedTest {
         ledgerAccount.setActive(true);
 
         Salary salary = new Salary();
-        salary.setTransactionDate(LocalDate.of(2024, Month.JANUARY,1));
+        salary.setTransactionDate(LocalDate.of(2024, Month.JANUARY, 1));
         salary.setAmount(incomeAmount);
         salary.setEmployeeId(3L);
 
         TaxTransaction zus1 = new TaxTransaction();
         zus1.setTaxBase(incomeAmount);
         zus1.setTaxCategory(TaxCategory.ZUS);
-        zus1.setAmount(incomeAmount*0.1371);
+        zus1.setAmount(incomeAmount * 0.1371);
         zus1.setEmployeeId(3L);
 
         Salary salary2 = new Salary();
-        salary2.setTransactionDate(LocalDate.of(2024, Month.FEBRUARY,1));
+        salary2.setTransactionDate(LocalDate.of(2024, Month.FEBRUARY, 1));
         salary2.setAmount(incomeAmount);
         salary2.setEmployeeId(3L);
 
         TaxTransaction zus2 = new TaxTransaction();
         zus2.setTaxBase(incomeAmount);
         zus2.setTaxCategory(TaxCategory.ZUS);
-        zus2.setAmount(incomeAmount*0.1371);
+        zus2.setAmount(incomeAmount * 0.1371);
         zus2.setEmployeeId(3L);
 
         ledgerAccount.getTransactions().add(salary);
         ledgerAccount.getTransactions().add(zus1);
         ledgerAccount.getTransactions().add(salary2);
         ledgerAccount.getTransactions().add(zus2);
-        ledgerAccount.setBalance(BigDecimal.valueOf(salary.getAmount()+salary2.getAmount()));
+        ledgerAccount.setBalance(BigDecimal.valueOf(salary.getAmount() + salary2.getAmount()));
 
         return ledgerAccount;
     }
