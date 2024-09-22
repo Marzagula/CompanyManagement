@@ -53,19 +53,19 @@ public class TaxesParametrizedTest {
     @Parameterized.Parameters(name = "{index}: Test with salary={0}, expectedZusTax={1}, expectedPitTax={2}, fiscalYear={3}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {10000, 4319.0, 705.0, 2024},
-                {20000, 8638.0, 3162.0, 2024},
-                {18000, 7774.0, 2590.0, 2024},
-                {17000, 7342.0, 2314.0, 2024},
-                {15000, 6479.0, 1762.0, 2024},
-                {22000, 9502.0, 3802.0, 2024},
-                {32000, 13821.0, 7002.0, 2024},
-                {40000, 17276.0, 9562.0, 2024},
-                {120000, 51828.0, 35162.0, 2024},
-                {130000, 56147.0, 38362.0, 2024},
-                {30000, 12957.0, 6362.0, 2024},
-                {16687, 7207.0, 2228.0, 2024},
-                {250000, 107975.0, 76762.0, 2024},
+                {10000, 4196.0, 705.0, 2024},
+                {20000, 8391.0, 3162.0, 2024},
+                {18000, 7552.0, 2590.0, 2024},
+                {17000, 7133.0, 2314.0, 2024},
+                {15000, 6293.0, 1762.0, 2024},
+                {22000, 9230.0, 3802.0, 2024},
+                {32000, 13426.0, 7002.0, 2024},
+                {40000, 16782.0, 9562.0, 2024},
+                {120000, 10800.0, 35162.0, 2024},//2 wyplaty sprawily ze z wplat do zusu jest wliczana juz tylko zdrowotna
+                {130000, 11700.0, 38362.0, 2024},//2 wyplaty sprawily ze z wplat do zusu jest wliczana juz tylko zdrowotna
+                {30000, 12587.0, 6362.0, 2024},
+                {16687, 7001.0, 2228.0, 2024},
+                {250000, 22500.0, 76762.0, 2024},//pierwsza wyplata sprawila ze z wplat do zusu jest wliczana juz tylko zdrowotna
 
         });
     }
@@ -73,7 +73,7 @@ public class TaxesParametrizedTest {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        this.zusProcessor = new ZUSCalculator(taxRepository);
+        this.zusProcessor = new ZUSCalculator(taxRepository, fiscalValuesRepository, ledgerAccountRepository);
         this.pitCalculator = new PITCalculator(taxRepository, fiscalValuesRepository, ledgerAccountRepository);
     }
 
@@ -239,6 +239,7 @@ public class TaxesParametrizedTest {
 
         TaxTransaction zus1 = new TaxTransaction();
         zus1.setTaxBase(incomeAmount);
+        zus1.setTransactionDate(LocalDate.of(2024, Month.JANUARY, 1));
         zus1.setTaxCategory(TaxCategory.ZUS);
         zus1.setAmount(incomeAmount * 0.1371);
         zus1.setEmployeeId(3L);
@@ -250,6 +251,7 @@ public class TaxesParametrizedTest {
 
         TaxTransaction zus2 = new TaxTransaction();
         zus2.setTaxBase(incomeAmount);
+        zus2.setTransactionDate(LocalDate.of(2024, Month.JANUARY, 1));
         zus2.setTaxCategory(TaxCategory.ZUS);
         zus2.setAmount(incomeAmount * 0.1371);
         zus2.setEmployeeId(3L);
