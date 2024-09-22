@@ -7,7 +7,7 @@ import org.gminds.accounting_service.model.enums.EmplAgreementType;
 import java.time.LocalDate;
 
 public record PaymentRangeDTO(
-        @NotNull @Min(1)Long id,
+        @NotNull @Min(1) Long id,
         @NotNull @Min(0) Double minSalary,
         @NotNull @Min(0) Double maxSalary,
         @NotNull Long jobId,

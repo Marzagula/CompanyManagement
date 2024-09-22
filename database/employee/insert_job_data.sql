@@ -24,7 +24,7 @@ INSERT INTO JOB (TITLE, DEPARTMENT_ID, DESCRIPTION) VALUES ('HR Specialist', 5, 
 INSERT INTO JOB (TITLE, DEPARTMENT_ID, DESCRIPTION) VALUES ('HR Manager', 5, 'Oversees HR policies and department operations');
 INSERT INTO JOB (TITLE, DEPARTMENT_ID, DESCRIPTION) VALUES ('Recruitment Coordinator', 5, 'Coordinates recruitment processes and activities');
 
-INSERT INTO CLAUSE (clause_type, clause_title, clause_description, start_date, end_date)
+INSERT INTO CLAUSE (clause_type, clause_title, clause_description)
 VALUES (
     'Wiek',
     'Klauzula dotycząca wieku podatnika',
