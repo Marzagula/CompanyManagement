@@ -1,6 +1,9 @@
 package org.gminds.accounting_service.service.taxes;
 
-import org.gminds.accounting_service.model.*;
+import org.gminds.accounting_service.model.FiscalValue;
+import org.gminds.accounting_service.model.Salary;
+import org.gminds.accounting_service.model.Tax;
+import org.gminds.accounting_service.model.TaxTransaction;
 import org.gminds.accounting_service.model.enums.TaxCategory;
 import org.gminds.accounting_service.repository.FiscalValuesRepository;
 import org.gminds.accounting_service.repository.LedgerAccountRepository;
@@ -19,7 +22,7 @@ public class ZUSCalculator implements TaxCalculator<Salary> {
     private final TaxRepository taxRepository;
     private final LedgerAccountRepository ledgerAccountRepository;
     private final FiscalValuesRepository fiscalValuesRepository;
-    Map<String,BigDecimal> fiscalValues;
+    Map<String, BigDecimal> fiscalValues;
     List<Tax> taxes;
 
     public ZUSCalculator(TaxRepository taxRepository,
@@ -31,12 +34,10 @@ public class ZUSCalculator implements TaxCalculator<Salary> {
 
     }
 
-    void init(int year){
-        long itemsCount = fiscalValuesRepository.findAll().stream().count();
-
+    void init(int year) {
         fiscalValues = fiscalValuesRepository.findByFiscalYear(year)
                 .stream()
-                .collect(Collectors.toMap(FiscalValue::getTaxSubtype,fiscalValue -> BigDecimal.valueOf(fiscalValue.getLimitValue())));
+                .collect(Collectors.toMap(FiscalValue::getTaxSubtype, fiscalValue -> BigDecimal.valueOf(fiscalValue.getLimitValue())));
         taxes = taxRepository.findByFiscalYear(year);
     }
 
@@ -52,8 +53,8 @@ public class ZUSCalculator implements TaxCalculator<Salary> {
                 .toList();
 
         BigDecimal currentZUSBaseSummary = transactions.stream()
-                .map(trans->BigDecimal.valueOf(trans.getTaxBase()))
-                .reduce(BigDecimal.ZERO,BigDecimal::add);
+                .map(trans -> BigDecimal.valueOf(trans.getTaxBase()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal monthlyIncome = BigDecimal.valueOf(transaction.getAmount());
         BigDecimal employeeZusTax = getEmployeeZusTax(
                 monthlyIncome,
@@ -73,12 +74,10 @@ public class ZUSCalculator implements TaxCalculator<Salary> {
         BigDecimal healthTax = (monthlyIncome
                 .subtract(employeeZusTax))
                 .multiply(healthTaxPercentage
-                        .divide(BigDecimal.valueOf(100),2,RoundingMode.HALF_UP));
+                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
         return employeeZusTax.add(healthTax).add(employerZusTax)
                 .setScale(0, RoundingMode.HALF_UP).doubleValue();
     }
-
-
 
 
     BigDecimal getEmployeeZusTax(BigDecimal income, BigDecimal zusBaseSummary, int monthNo) {

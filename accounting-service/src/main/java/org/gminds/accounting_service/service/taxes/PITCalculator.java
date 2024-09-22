@@ -21,15 +21,18 @@ public class PITCalculator implements TaxCalculator<Salary> {
     private final TaxRepository taxRepository;
     private final FiscalValuesRepository fiscalValuesRepository;
     private final LedgerAccountRepository ledgerAccountRepository;
+    private final ZUSCalculator zusCalculator;
     Map<String, BigDecimal> fiscalValues;
     List<Tax> taxes = new ArrayList<>();
 
     public PITCalculator(TaxRepository taxRepository,
                          FiscalValuesRepository fiscalValuesRepository,
-                         LedgerAccountRepository ledgerAccountRepository) {
+                         LedgerAccountRepository ledgerAccountRepository,
+                         ZUSCalculator zusCalculator) {
         this.taxRepository = taxRepository;
         this.fiscalValuesRepository = fiscalValuesRepository;
         this.ledgerAccountRepository = ledgerAccountRepository;
+        this.zusCalculator = zusCalculator;
     }
 
     /*TODO*
@@ -61,7 +64,7 @@ public class PITCalculator implements TaxCalculator<Salary> {
             predictedYearlyPitTax = predictedYearlyPitTax.add(getMonthlyPit(currentZusBaseSummary, currentIncomeBasedSummary, BigDecimal.valueOf(salary.getAmount()), s.getTransactionDate().getMonthValue()));
             currentIncomeBasedSummary = currentIncomeBasedSummary.add(
                     BigDecimal.valueOf(s.getAmount())
-                            .subtract(getZusTax(BigDecimal.valueOf(s.getAmount()),
+                            .subtract(zusCalculator.getEmployeeZusTax(BigDecimal.valueOf(s.getAmount()),
                                     currentZusBaseSummary,
                                     s.getTransactionDate().getMonthValue()))
                             .subtract(fiscalValues.get("employee_costs"))
@@ -76,7 +79,7 @@ public class PITCalculator implements TaxCalculator<Salary> {
             predictedYearlyPitTax = predictedYearlyPitTax.add(monthlyPit);
             currentIncomeBasedSummary = currentIncomeBasedSummary.add(
                     BigDecimal.valueOf(salary.getAmount())
-                            .subtract(getZusTax(BigDecimal.valueOf(salary.getAmount()),
+                            .subtract(zusCalculator.getEmployeeZusTax(BigDecimal.valueOf(salary.getAmount()),
                                     currentZusBaseSummary,
                                     i))
                             .subtract(fiscalValues.get("employee_costs"))
@@ -93,13 +96,13 @@ public class PITCalculator implements TaxCalculator<Salary> {
     private void initTaxes(int year) {
         fiscalValues = fiscalValuesRepository.findByFiscalYear(year)
                 .stream()
-                .collect(Collectors.toMap(FiscalValue::getTaxSubtype,fiscalValue -> BigDecimal.valueOf(fiscalValue.getLimitValue())));
+                .collect(Collectors.toMap(FiscalValue::getTaxSubtype, fiscalValue -> BigDecimal.valueOf(fiscalValue.getLimitValue())));
         taxes = taxRepository.findByFiscalYear(year);
     }
 
     BigDecimal getMonthlyPit(BigDecimal currentZusSummary, BigDecimal currentIncomeBasedSummary, BigDecimal incomeInCurrentMonth, int currentMonthNo) {
 
-        BigDecimal zusTax = getZusTax(incomeInCurrentMonth, currentZusSummary, currentMonthNo);
+        BigDecimal zusTax = zusCalculator.getEmployeeZusTax(incomeInCurrentMonth, currentZusSummary, currentMonthNo);
         BigDecimal adjustedIncome = incomeInCurrentMonth.subtract(zusTax).subtract(fiscalValues.get("employee_costs"));
         BigDecimal monthlyDeduction = fiscalValues.get("maximum_deduction").divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP);
         BigDecimal calculatedTax;
@@ -139,38 +142,6 @@ public class PITCalculator implements TaxCalculator<Salary> {
         }
 
         return calculatedTax.subtract(monthlyDeduction).setScale(0, RoundingMode.HALF_UP);
-    }
-
-
-    BigDecimal getZusTax(BigDecimal income, BigDecimal zusBaseSummary, int monthNo) {
-        BigDecimal retirementLimit = fiscalValues.get("retirement_contribution_limit");
-        BigDecimal zusTaxBase;
-
-        List<BigDecimal> zusPercentages = taxes.stream()
-                .filter(tax -> tax.getTaxCategory().equals(TaxCategory.ZUS) &&
-                        (tax.getTaxSubcategory().equals("emerytalna pracownika") ||
-                                tax.getTaxSubcategory().equals("rentowa pracownika") ||
-                                tax.getTaxSubcategory().equals("chorobowa"))
-                )
-                .map(tax -> BigDecimal.valueOf(tax.getPercentage()))
-                .toList();
-
-        if (zusBaseSummary.compareTo(retirementLimit) <= 0 &&
-                income.multiply(BigDecimal.valueOf(monthNo)).compareTo(retirementLimit) == 1) {
-            zusTaxBase = retirementLimit.subtract(zusBaseSummary);
-        } else if (zusBaseSummary.compareTo(retirementLimit) > 0) {
-            zusTaxBase = BigDecimal.ZERO;
-        } else if (income.compareTo(retirementLimit) > 0) {
-            zusTaxBase = retirementLimit;
-        } else {
-            zusTaxBase = income;
-        }
-
-        BigDecimal zusTax = zusPercentages.stream()
-                .map(percentage -> zusTaxBase.multiply(percentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        return zusTax.setScale(0, RoundingMode.HALF_UP);
     }
 
 

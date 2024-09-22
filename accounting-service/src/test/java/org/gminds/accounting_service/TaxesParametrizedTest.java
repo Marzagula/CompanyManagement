@@ -74,7 +74,7 @@ public class TaxesParametrizedTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         this.zusProcessor = new ZUSCalculator(taxRepository, fiscalValuesRepository, ledgerAccountRepository);
-        this.pitCalculator = new PITCalculator(taxRepository, fiscalValuesRepository, ledgerAccountRepository);
+        this.pitCalculator = new PITCalculator(taxRepository, fiscalValuesRepository, ledgerAccountRepository, zusProcessor);
     }
 
 
