@@ -13,19 +13,19 @@ import java.util.List;
 public class LedgerAccount extends Auditable<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String accountNumber;
-    String accountName;
+    private Long id;
+    private String accountNumber;
+    private String accountName;
     @Enumerated(EnumType.STRING)
-    LedgerAccountPlan plan;
+    private LedgerAccountPlan plan;
     @OneToMany(mappedBy = "ledgerAccount", cascade = CascadeType.ALL)
-    List<Transaction> transactions = new ArrayList<>();
+    private List<Transaction> transactions = new ArrayList<>();
     @Enumerated(EnumType.STRING)
-    Currency currency;
-    BigDecimal balance;
-    boolean isActive = true;
-    LocalDate startDate;
-    LocalDate endDate;
+    private Currency currency;
+    private BigDecimal balance;
+    private boolean isActive = true;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     public Long getId() {
         return id;

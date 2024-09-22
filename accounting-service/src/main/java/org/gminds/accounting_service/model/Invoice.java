@@ -8,11 +8,11 @@ import org.gminds.accounting_service.model.enums.InvoiceType;
 public class Invoice extends Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String invoiceNumber;
-    Double vatTax;
+    private Long id;
+    private String invoiceNumber;
+    private Double vatTax;
     @Enumerated(EnumType.STRING)
-    InvoiceType invoiceType;
+    private InvoiceType invoiceType;
 
     @Override
     public Long getId() {

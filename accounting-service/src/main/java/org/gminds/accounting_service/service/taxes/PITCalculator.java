@@ -23,7 +23,7 @@ public class PITCalculator implements TaxCalculator<Salary> {
     private final LedgerAccountRepository ledgerAccountRepository;
     private final ZUSCalculator zusCalculator;
     Map<String, BigDecimal> fiscalValues;
-    List<Tax> taxes = new ArrayList<>();
+    List<Tax> taxes;
 
     public PITCalculator(TaxRepository taxRepository,
                          FiscalValuesRepository fiscalValuesRepository,
@@ -36,16 +36,15 @@ public class PITCalculator implements TaxCalculator<Salary> {
     }
 
     /*TODO*
-       3. subtypy skladek moga byc inne w kolejnych latach podatkowych, trzeba to jakos obsluzyc
        6. trzeba wziac pod uwage to czy podatnik ma skonczone 26 lat
     */
     @Override
     public Double calculateTax(Salary transaction) {
         initTaxes(transaction.getTransactionDate().getYear());
-        return predictYearlyPITTax(transaction).doubleValue();
+        return calculateMonthlyPitTax(transaction).doubleValue();
     }
 
-    BigDecimal predictYearlyPITTax(Salary salary) {
+    private BigDecimal calculateMonthlyPitTax(Salary salary) {
         List<Salary> salaries = ledgerAccountRepository.findByAccountNameWithTransactions("UOP").getTransactions()
                 .stream()
                 .filter(transaction -> transaction instanceof Salary && Objects.equals(((Salary) transaction).getEmployeeId(), salary.getEmployeeId()))
@@ -100,7 +99,7 @@ public class PITCalculator implements TaxCalculator<Salary> {
         taxes = taxRepository.findByFiscalYear(year);
     }
 
-    BigDecimal getMonthlyPit(BigDecimal currentZusSummary, BigDecimal currentIncomeBasedSummary, BigDecimal incomeInCurrentMonth, int currentMonthNo) {
+    private BigDecimal getMonthlyPit(BigDecimal currentZusSummary, BigDecimal currentIncomeBasedSummary, BigDecimal incomeInCurrentMonth, int currentMonthNo) {
 
         BigDecimal zusTax = zusCalculator.getEmployeeZusTax(incomeInCurrentMonth, currentZusSummary, currentMonthNo);
         BigDecimal adjustedIncome = incomeInCurrentMonth.subtract(zusTax).subtract(fiscalValues.get("employee_costs"));

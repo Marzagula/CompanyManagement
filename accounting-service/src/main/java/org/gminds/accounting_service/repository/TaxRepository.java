@@ -9,5 +9,5 @@ import java.util.List;
 public interface TaxRepository extends JpaRepository<Tax, Long> {
     List<Tax> findByFiscalYear(Integer fiscalYear);
 
-    List<Tax> findByFiscalYearAndTaxType(Integer fiscalYear, TaxCategory taxType);
+    List<Tax> findByFiscalYearAndTaxCategory(Integer fiscalYear, TaxCategory taxCategory);
 }

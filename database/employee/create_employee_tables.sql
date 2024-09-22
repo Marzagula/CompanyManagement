@@ -76,3 +76,24 @@ CREATE TABLE PAYMENT_RANGE (
     CONSTRAINT FK_PAYMENT_RANGE_JOB FOREIGN KEY (JOB_ID) REFERENCES JOB(ID) ON DELETE CASCADE
 );
 
+CREATE TABLE CLAUSE (
+    id BIGSERIAL PRIMARY KEY,
+    clause_type VARCHAR(255),
+    clause_title VARCHAR(255),
+    clause_description TEXT
+);
+
+CREATE TABLE employee_agreement_clause (
+    id BIGSERIAL PRIMARY KEY,
+    start_date DATE,
+    end_date DATE,
+    employee_agreement_clause_id BIGINT NOT NULL,
+    clause_id BIGINT NOT NULL,
+    CONSTRAINT fk_employee_agreement
+        FOREIGN KEY (employee_agreement_clause_id)
+        REFERENCES employee_agreement(id),
+    CONSTRAINT fk_clause
+        FOREIGN KEY (clause_id)
+        REFERENCES clause(id)
+);
+

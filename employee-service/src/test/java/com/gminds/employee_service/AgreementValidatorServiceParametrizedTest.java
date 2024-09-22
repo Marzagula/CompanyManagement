@@ -5,10 +5,7 @@ import com.gminds.employee_service.model.Employee;
 import com.gminds.employee_service.model.EmployeeAgreement;
 import com.gminds.employee_service.model.Job;
 import com.gminds.employee_service.model.PaymentRange;
-import com.gminds.employee_service.model.dtos.DepartmentDTO;
-import com.gminds.employee_service.model.dtos.EmployeeAgreementDTO;
-import com.gminds.employee_service.model.dtos.EmployeeDTO;
-import com.gminds.employee_service.model.dtos.JobDTO;
+import com.gminds.employee_service.model.dtos.*;
 import com.gminds.employee_service.model.enums.AgreementStatus;
 import com.gminds.employee_service.model.enums.EmplAgreementType;
 import com.gminds.employee_service.model.enums.EmploymentPaymentType;
@@ -26,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static org.junit.Assert.assertThrows;
@@ -82,6 +80,7 @@ public class AgreementValidatorServiceParametrizedTest {
                 agreementType,
                 EmploymentPaymentType.PER_MONTH,
                 1L,
+                List.of(new EmployeeAgreementClauseDTO(1L,1L, LocalDate.now(),  LocalDate.now().plus(14, ChronoUnit.MONTHS),1L)),
                 null,
                 null,
                 null,

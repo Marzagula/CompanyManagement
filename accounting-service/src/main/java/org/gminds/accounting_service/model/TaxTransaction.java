@@ -7,11 +7,11 @@ import org.gminds.accounting_service.model.enums.TaxCategory;
 public class TaxTransaction extends Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @Enumerated(EnumType.STRING)
-    TaxCategory taxCategory;
-    Double taxBase;
-    Long employeeId;
+    private TaxCategory taxCategory;
+    private Double taxBase;
+    private Long employeeId;
 
     public Long getId() {
         return id;

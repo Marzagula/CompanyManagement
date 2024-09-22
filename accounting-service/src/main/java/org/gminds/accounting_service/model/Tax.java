@@ -10,11 +10,11 @@ import org.gminds.accounting_service.model.enums.TaxCategory;
 public class Tax extends Auditable<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    TaxCategory taxCategory;
-    String taxSubcategory;
-    Double percentage;
-    Integer fiscalYear;
+    private Long id;
+    private TaxCategory taxCategory;
+    private String taxSubcategory;
+    private Double percentage;
+    private Integer fiscalYear;
 
     public Long getId() {
         return id;

@@ -7,8 +7,8 @@ import jakarta.persistence.*;
 public class Salary extends Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    Long employeeId;
+    private Long id;
+    private Long employeeId;
 
     @Override
     public Long getId() {

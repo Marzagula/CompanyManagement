@@ -12,9 +12,9 @@ import java.util.Set;
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String name;
-    String surname;
+    private Long id;
+    private String name;
+    private String surname;
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;

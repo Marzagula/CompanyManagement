@@ -11,11 +11,11 @@ import java.time.LocalDate;
 public abstract class Transaction extends Auditable<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    LocalDate transactionDate;
-    String description;
-    String counterparty;
-    Double amount;
+    private Long id;
+    private LocalDate transactionDate;
+    private String description;
+    private String counterparty;
+    private Double amount;
     @ManyToOne
     @JoinColumn(name = "ledger_account_id")
     private LedgerAccount ledgerAccount;

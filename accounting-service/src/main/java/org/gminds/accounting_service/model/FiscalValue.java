@@ -8,15 +8,15 @@ import org.gminds.accounting_service.model.enums.TaxType;
 public class FiscalValue {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    Integer fiscalYear;
+    private Long id;
+    private Integer fiscalYear;
     @Enumerated(EnumType.STRING)
-    TaxType taxType;
-    String taxSubtype;
-    Double limitValue;
+    private TaxType taxType;
+    private String taxSubtype;
+    private Double limitValue;
     @Enumerated(EnumType.STRING)
-    LimitCondition limitCondition;
-    String description;
+    private LimitCondition limitCondition;
+    private String description;
 
     public Long getId() {
         return id;

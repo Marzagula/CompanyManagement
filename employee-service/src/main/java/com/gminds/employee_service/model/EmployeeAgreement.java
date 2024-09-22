@@ -6,24 +6,27 @@ import com.gminds.employee_service.model.enums.EmploymentPaymentType;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 public class EmployeeAgreement extends Auditable<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    Double salary;
-    LocalDate fromDate;
-    LocalDate toDate;
+    private Long id;
+    private Double salary;
+    private LocalDate fromDate;
+    private LocalDate toDate;
     @Enumerated(EnumType.STRING)
-    AgreementStatus status;
+    private AgreementStatus status;
     @Enumerated(EnumType.STRING)
-    EmplAgreementType agreementType;
+    private EmplAgreementType agreementType;
     @Enumerated(EnumType.STRING)
-    EmploymentPaymentType paymentType;
+    private EmploymentPaymentType paymentType;
     @ManyToOne
     @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
+    @OneToMany(mappedBy = "employeeAgreement", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EmployeeAgreementClause> clauses;
 
     public EmployeeAgreement() {
     }

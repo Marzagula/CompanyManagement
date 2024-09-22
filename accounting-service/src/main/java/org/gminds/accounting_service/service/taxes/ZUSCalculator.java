@@ -80,7 +80,7 @@ public class ZUSCalculator implements TaxCalculator<Salary> {
     }
 
 
-    BigDecimal getEmployeeZusTax(BigDecimal income, BigDecimal zusBaseSummary, int monthNo) {
+    public BigDecimal getEmployeeZusTax(BigDecimal income, BigDecimal zusBaseSummary, int monthNo) {
         BigDecimal retirementLimit = fiscalValues.get("retirement_contribution_limit");
         BigDecimal zusTaxBase;
 
@@ -111,7 +111,7 @@ public class ZUSCalculator implements TaxCalculator<Salary> {
         return zusTax.setScale(2, RoundingMode.HALF_UP);
     }
 
-    BigDecimal getEmployerZusTax(BigDecimal income, BigDecimal zusBaseSummary, int monthNo) {
+    private BigDecimal getEmployerZusTax(BigDecimal income, BigDecimal zusBaseSummary, int monthNo) {
         BigDecimal retirementLimit = fiscalValues.get("retirement_contribution_limit");
         BigDecimal zusTaxBase;
 
