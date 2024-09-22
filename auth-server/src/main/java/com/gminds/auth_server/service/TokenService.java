@@ -14,15 +14,15 @@ import java.util.stream.Collectors;
 
 @Service
 public class TokenService {
+    private final JwtEncoder encoder;
     @Value("${spring.application.name}")
     private String applicationName;
-    private final JwtEncoder encoder;
 
     public TokenService(JwtEncoder encoder) {
         this.encoder = encoder;
     }
 
-    public String generateUserToken(Authentication authentication){
+    public String generateUserToken(Authentication authentication) {
         Instant now = Instant.now();
         String scope = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -30,7 +30,7 @@ public class TokenService {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer(applicationName)
                 .issuedAt(now)
-                .expiresAt(now.plus(1,ChronoUnit.HOURS))
+                .expiresAt(now.plus(1, ChronoUnit.HOURS))
                 .subject(authentication.getName())
                 .claim("scope", scope)
                 .build();

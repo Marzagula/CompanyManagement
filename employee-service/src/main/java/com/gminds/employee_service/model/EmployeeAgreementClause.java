@@ -10,12 +10,12 @@ public class EmployeeAgreementClause {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @ManyToOne
-    @JoinColumn(name="clause_id", nullable = false)
+    @JoinColumn(name = "clause_id", nullable = false)
     Clause clause;
     LocalDate startDate;
     LocalDate endDate;
     @ManyToOne
-    @JoinColumn(name="employee_agreement_clause_id", nullable = false)
+    @JoinColumn(name = "employee_agreement_clause_id", nullable = false)
     EmployeeAgreement employeeAgreement;
 
     public Long getId() {

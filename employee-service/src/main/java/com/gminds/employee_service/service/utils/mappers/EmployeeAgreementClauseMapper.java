@@ -1,7 +1,6 @@
 package com.gminds.employee_service.service.utils.mappers;
 
 import com.gminds.employee_service.model.EmployeeAgreementClause;
-
 import com.gminds.employee_service.model.dtos.EmployeeAgreementClauseDTO;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

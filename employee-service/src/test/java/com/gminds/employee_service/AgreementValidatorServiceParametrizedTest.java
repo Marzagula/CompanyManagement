@@ -4,7 +4,6 @@ import com.gminds.employee_service.exceptions.EmployeeAgreementException;
 import com.gminds.employee_service.model.Employee;
 import com.gminds.employee_service.model.EmployeeAgreement;
 import com.gminds.employee_service.model.Job;
-import com.gminds.employee_service.model.PaymentRange;
 import com.gminds.employee_service.model.dtos.*;
 import com.gminds.employee_service.model.enums.AgreementStatus;
 import com.gminds.employee_service.model.enums.EmplAgreementType;
@@ -80,7 +79,7 @@ public class AgreementValidatorServiceParametrizedTest {
                 agreementType,
                 EmploymentPaymentType.PER_MONTH,
                 1L,
-                List.of(new EmployeeAgreementClauseDTO(1L,1L, LocalDate.now(),  LocalDate.now().plus(14, ChronoUnit.MONTHS),1L)),
+                List.of(new EmployeeAgreementClauseDTO(1L, 1L, LocalDate.now(), LocalDate.now().plus(14, ChronoUnit.MONTHS), 1L)),
                 null,
                 null,
                 null,
@@ -106,12 +105,17 @@ public class AgreementValidatorServiceParametrizedTest {
         employee.setJob(job);
 
         // Mock PaymentRange and cachedPaymentRangeService behavior
-        PaymentRange paymentRange = new PaymentRange();
-        paymentRange.setJob(job);
-        paymentRange.setEmplAgreementType(agreementType);
-        paymentRange.setMinSalary(minSalary);
-        paymentRange.setMaxSalary(maxSalary);
-        paymentRange.setFiscalYear(2024);
+        PaymentRangeDTO paymentRange = new PaymentRangeDTO(
+                1L,
+                minSalary,
+                maxSalary,
+                job.getId(),
+                agreementType,
+                2024,
+                null,
+                null,
+                null,
+                null);
 
         when(cachedPaymentRangeService.getCachedPaymentRanges()).thenReturn(List.of(paymentRange));
 

@@ -16,7 +16,7 @@ public class EmployeeUserDetailService implements UserDetailsService {
     private final EmployeeUserRepository employeeUserRepository;
 
     @Autowired
-    EmployeeUserDetailService(EmployeeUserRepository employeeUserRepository){
+    EmployeeUserDetailService(EmployeeUserRepository employeeUserRepository) {
         this.employeeUserRepository = employeeUserRepository;
     }
 

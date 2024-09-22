@@ -1,6 +1,5 @@
 package org.gminds.accounting_service.service;
 
-import org.gminds.accounting_service.model.PaymentRange;
 import org.gminds.accounting_service.repository.PaymentRangeRepository;
 import org.springframework.stereotype.Service;
 

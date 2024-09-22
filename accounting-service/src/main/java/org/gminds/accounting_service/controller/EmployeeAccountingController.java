@@ -1,6 +1,5 @@
 package org.gminds.accounting_service.controller;
 
-import org.gminds.accounting_service.model.PaymentRange;
 import org.gminds.accounting_service.service.EmployeeAccounting;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +20,7 @@ public class EmployeeAccountingController {
 
     @GetMapping("/paymentRanges")
     public ResponseEntity<List<PaymentRange>> findAllPaymentRanges() {
+        List<PaymentRange> ranges = this.employeeAccounting.findAllPaymentRange();
         return ResponseEntity.ok(this.employeeAccounting.findAllPaymentRange());
     }
 }
