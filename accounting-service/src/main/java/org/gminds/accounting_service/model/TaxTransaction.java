@@ -18,8 +18,6 @@ public class TaxTransaction extends Transaction {
     public TaxTransaction() {
     }
 
-    ;
-
     public TaxTransaction(TaxCategory taxCategory,
                           Double taxBase,
                           Long employeeId,

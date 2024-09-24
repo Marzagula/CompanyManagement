@@ -26,7 +26,14 @@ INSERT INTO JOB (TITLE, DEPARTMENT_ID, DESCRIPTION) VALUES ('Recruitment Coordin
 
 INSERT INTO CLAUSE (clause_type, clause_title, clause_description)
 VALUES (
-    'Wiek',
+    'age',
     'Klauzula dotycząca wieku podatnika',
     'Podatnik, który nie ukończył 26. roku życia, może korzystać z ulg podatkowych.'
+);
+
+INSERT INTO CLAUSE (clause_type, clause_title, clause_description)
+VALUES (
+    'residence_outside',
+    'Praca poza miejscem zamieszkania',
+    'Podatnik, który pracuje poza miejscem zamieszkania ponosi większe koszty pracy.'
 );

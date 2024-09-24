@@ -47,6 +47,7 @@ public class EmployeePayment implements Payment {
         if (transaction instanceof Salary) {
             ledgerAccount = ledgerAccountRepository.findByAccountNameWithTransactions("UOP");
             createPitTransaction((Salary) transaction);
+            createZusTransaction((Salary) transaction);
             ledgerAccountRepository.save(ledgerAccount);
         }
         /*TODO to tu beda sie odbywac wszelkie odliczenia od podatku ktory zostanie najpierw policzony w calosci*/

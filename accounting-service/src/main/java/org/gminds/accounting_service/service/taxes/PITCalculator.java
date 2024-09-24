@@ -56,7 +56,7 @@ public class PITCalculator implements TaxCalculator<Salary> {
         BigDecimal currentZusBaseSummary = BigDecimal.ZERO;
 
 
-        BigDecimal predictedYearlyPitTax = new BigDecimal(0);
+        BigDecimal predictedYearlyPitTax = BigDecimal.ZERO;
         int monthNo = salary.getTransactionDate().getMonthValue();
         BigDecimal currentIncomeBasedSummary = BigDecimal.ZERO;
         for (Salary s : salaries) {
@@ -67,7 +67,7 @@ public class PITCalculator implements TaxCalculator<Salary> {
                             .subtract(zusCalculator.getEmployeeZusTax(BigDecimal.valueOf(s.getAmount()),
                                     currentZusBaseSummary,
                                     s.getTransactionDate().getMonthValue()))
-                            .subtract(fiscalValues.get("employee_costs"))
+                    //.subtract(fiscalValues.get("employee_costs"))
             );
             currentZusBaseSummary = currentZusBaseSummary.add(BigDecimal.valueOf(s.getAmount()));
         }
@@ -82,7 +82,7 @@ public class PITCalculator implements TaxCalculator<Salary> {
                             .subtract(zusCalculator.getEmployeeZusTax(BigDecimal.valueOf(salary.getAmount()),
                                     currentZusBaseSummary,
                                     i))
-                            .subtract(fiscalValues.get("employee_costs"))
+                    //.subtract(fiscalValues.get("employee_costs"))
 
             );
             currentZusBaseSummary = currentZusBaseSummary.add(BigDecimal.valueOf(salary.getAmount()));
@@ -103,8 +103,8 @@ public class PITCalculator implements TaxCalculator<Salary> {
     private BigDecimal getMonthlyPit(BigDecimal currentZusSummary, BigDecimal currentIncomeBasedSummary, BigDecimal incomeInCurrentMonth, int currentMonthNo) {
 
         BigDecimal zusTax = zusCalculator.getEmployeeZusTax(incomeInCurrentMonth, currentZusSummary, currentMonthNo);
-        BigDecimal adjustedIncome = incomeInCurrentMonth.subtract(zusTax).subtract(fiscalValues.get("employee_costs"));
-        BigDecimal monthlyDeduction = fiscalValues.get("maximum_deduction").divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP);
+        BigDecimal adjustedIncome = incomeInCurrentMonth.subtract(zusTax)/*.subtract(fiscalValues.get("employee_costs"))*/;
+        /*BigDecimal monthlyDeduction = fiscalValues.get("maximum_deduction").divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP);*/
         BigDecimal calculatedTax;
 
         BigDecimal firstBracketPercentage = taxes.stream()
@@ -141,7 +141,7 @@ public class PITCalculator implements TaxCalculator<Salary> {
                     .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
         }
 
-        return calculatedTax.subtract(monthlyDeduction).setScale(0, RoundingMode.HALF_UP);
+        return calculatedTax/*.subtract(monthlyDeduction)*/.setScale(0, RoundingMode.HALF_UP);
     }
 
 
