@@ -1,6 +1,9 @@
 package org.gminds.accounting_service.controller;
 
+
+import org.gminds.accounting_service.model.dtos.PaymentRangeDTO;
 import org.gminds.accounting_service.service.EmployeeAccounting;
+import org.gminds.accounting_service.service.util.PaymentRangeMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +22,11 @@ public class EmployeeAccountingController {
     }
 
     @GetMapping("/paymentRanges")
-    public ResponseEntity<List<PaymentRange>> findAllPaymentRanges() {
-        List<PaymentRange> ranges = this.employeeAccounting.findAllPaymentRange();
-        return ResponseEntity.ok(this.employeeAccounting.findAllPaymentRange());
+    public ResponseEntity<List<PaymentRangeDTO>> findAllPaymentRanges() {
+        List<PaymentRangeDTO> response = this.employeeAccounting.findAllPaymentRange()
+                .stream()
+                .map(paymentRange -> PaymentRangeMapper.INSTANCE.toPaymentRangeDTO(paymentRange))
+                .toList();
+        return ResponseEntity.ok(response);
     }
 }

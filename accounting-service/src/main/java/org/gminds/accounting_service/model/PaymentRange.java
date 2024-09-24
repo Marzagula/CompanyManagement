@@ -1,7 +1,7 @@
 package org.gminds.accounting_service.model;
 
 import jakarta.persistence.*;
-import org.gminds.accounting_service.model.enums.EmplAgreementType;
+import org.gminds.accounting_service.model.enums.employee.EmplAgreementType;
 
 @Entity
 public class PaymentRange extends Auditable<String> {

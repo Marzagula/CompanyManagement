@@ -2,7 +2,7 @@ package org.gminds.accounting_service.model.dtos;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import org.gminds.accounting_service.model.enums.EmplAgreementType;
+import org.gminds.accounting_service.model.enums.employee.EmplAgreementType;
 
 import java.time.LocalDate;
 

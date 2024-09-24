@@ -7,6 +7,7 @@ import org.gminds.accounting_service.model.enums.TaxCategory;
 import org.gminds.accounting_service.repository.FiscalValuesRepository;
 import org.gminds.accounting_service.repository.LedgerAccountRepository;
 import org.gminds.accounting_service.repository.TaxRepository;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Service
 public class PITCalculator implements TaxCalculator<Salary> {
 
     private final TaxRepository taxRepository;
@@ -38,9 +40,9 @@ public class PITCalculator implements TaxCalculator<Salary> {
        6. trzeba wziac pod uwage to czy podatnik ma skonczone 26 lat
     */
     @Override
-    public Double calculateTax(Salary transaction) {
+    public BigDecimal calculateTax(Salary transaction) {
         initTaxes(transaction.getTransactionDate().getYear());
-        return calculateMonthlyPitTax(transaction).doubleValue();
+        return calculateMonthlyPitTax(transaction);
     }
 
     private BigDecimal calculateMonthlyPitTax(Salary salary) {
@@ -94,7 +96,7 @@ public class PITCalculator implements TaxCalculator<Salary> {
     private void initTaxes(int year) {
         fiscalValues = fiscalValuesRepository.findByFiscalYear(year)
                 .stream()
-                .collect(Collectors.toMap(FiscalValue::getTaxSubtype, fiscalValue -> BigDecimal.valueOf(fiscalValue.getLimitValue())));
+                .collect(Collectors.toMap(FiscalValue::getFiscalValueSubtype, fiscalValue -> BigDecimal.valueOf(fiscalValue.getLimitValue())));
         taxes = taxRepository.findByFiscalYear(year);
     }
 

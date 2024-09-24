@@ -3,6 +3,8 @@ package org.gminds.accounting_service.model;
 import jakarta.persistence.*;
 import org.gminds.accounting_service.model.enums.TaxCategory;
 
+import java.time.LocalDate;
+
 @Entity
 public class TaxTransaction extends Transaction {
     @Id
@@ -12,6 +14,27 @@ public class TaxTransaction extends Transaction {
     private TaxCategory taxCategory;
     private Double taxBase;
     private Long employeeId;
+
+    public TaxTransaction() {
+    }
+
+    ;
+
+    public TaxTransaction(TaxCategory taxCategory,
+                          Double taxBase,
+                          Long employeeId,
+                          String description,
+                          String counterparty,
+                          Double amount,
+                          LocalDate transactionDate) {
+        this.taxCategory = taxCategory;
+        this.employeeId = employeeId;
+        this.description = description;
+        this.taxBase = taxBase;
+        this.amount = amount;
+        this.counterparty = counterparty;
+        this.transactionDate = transactionDate;
+    }
 
     public Long getId() {
         return id;

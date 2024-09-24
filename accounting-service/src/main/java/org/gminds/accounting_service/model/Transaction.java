@@ -9,13 +9,13 @@ import java.time.LocalDate;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "transaction_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Transaction extends Auditable<String> {
+    protected LocalDate transactionDate;
+    protected String description;
+    protected String counterparty;
+    protected Double amount;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDate transactionDate;
-    private String description;
-    private String counterparty;
-    private Double amount;
     @ManyToOne
     @JoinColumn(name = "ledger_account_id")
     private LedgerAccount ledgerAccount;

@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +25,7 @@ public class ZUSCalculator implements TaxCalculator<Salary> {
     private final FiscalValuesRepository fiscalValuesRepository;
     Map<String, BigDecimal> fiscalValues;
     List<Tax> taxes;
+    Set<String> employeeSubcategories = Set.of("emerytalna pracownika", "rentowa pracownika", "chorobowa");
 
     public ZUSCalculator(TaxRepository taxRepository,
                          FiscalValuesRepository fiscalValuesRepository,
@@ -37,12 +39,12 @@ public class ZUSCalculator implements TaxCalculator<Salary> {
     void init(int year) {
         fiscalValues = fiscalValuesRepository.findByFiscalYear(year)
                 .stream()
-                .collect(Collectors.toMap(FiscalValue::getTaxSubtype, fiscalValue -> BigDecimal.valueOf(fiscalValue.getLimitValue())));
+                .collect(Collectors.toMap(FiscalValue::getFiscalValueSubtype, fiscalValue -> BigDecimal.valueOf(fiscalValue.getLimitValue())));
         taxes = taxRepository.findByFiscalYear(year);
     }
 
     @Override
-    public Double calculateTax(Salary transaction) {
+    public BigDecimal calculateTax(Salary transaction) {
         init(transaction.getTransactionDate().getYear());
         List<TaxTransaction> transactions = ledgerAccountRepository.findByAccountNameWithTransactions("UOP").getTransactions()
                 .stream()
@@ -76,22 +78,25 @@ public class ZUSCalculator implements TaxCalculator<Salary> {
                 .multiply(healthTaxPercentage
                         .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
         return employeeZusTax.add(healthTax).add(employerZusTax)
-                .setScale(0, RoundingMode.HALF_UP).doubleValue();
+                .setScale(0, RoundingMode.HALF_UP);
     }
 
+    public BigDecimal getEmployeeZusPart() {
 
-    public BigDecimal getEmployeeZusTax(BigDecimal income, BigDecimal zusBaseSummary, int monthNo) {
-        BigDecimal retirementLimit = fiscalValues.get("retirement_contribution_limit");
-        BigDecimal zusTaxBase;
-
-        List<BigDecimal> zusPercentages = taxes.stream()
+        return taxes.stream()
                 .filter(tax -> tax.getTaxCategory().equals(TaxCategory.ZUS) &&
                         (tax.getTaxSubcategory().equals("emerytalna pracownika") ||
                                 tax.getTaxSubcategory().equals("rentowa pracownika") ||
                                 tax.getTaxSubcategory().equals("chorobowa"))
                 )
                 .map(tax -> BigDecimal.valueOf(tax.getPercentage()))
-                .toList();
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    }
+
+    public BigDecimal getEmployeeZusTax(BigDecimal income, BigDecimal zusBaseSummary, int monthNo) {
+        BigDecimal retirementLimit = fiscalValues.get("retirement_contribution_limit");
+        BigDecimal zusTaxBase;
 
         if (zusBaseSummary.compareTo(retirementLimit) <= 0 &&
                 income.multiply(BigDecimal.valueOf(monthNo)).compareTo(retirementLimit) == 1) {
@@ -104,9 +109,7 @@ public class ZUSCalculator implements TaxCalculator<Salary> {
             zusTaxBase = income;
         }
 
-        BigDecimal zusTax = zusPercentages.stream()
-                .map(percentage -> zusTaxBase.multiply(percentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal zusTax = zusTaxBase.multiply(getEmployeeZusPart()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
 
         return zusTax.setScale(2, RoundingMode.HALF_UP);
     }
@@ -117,9 +120,7 @@ public class ZUSCalculator implements TaxCalculator<Salary> {
 
         List<BigDecimal> zusPercentages = taxes.stream()
                 .filter(tax -> tax.getTaxCategory().equals(TaxCategory.ZUS) &&
-                        !(tax.getTaxSubcategory().equals("emerytalna pracownika") ||
-                                tax.getTaxSubcategory().equals("rentowa pracownika") ||
-                                tax.getTaxSubcategory().equals("chorobowa"))
+                        !employeeSubcategories.contains(tax.getTaxSubcategory())
                 )
                 .map(tax -> BigDecimal.valueOf(tax.getPercentage()))
                 .toList();

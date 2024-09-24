@@ -1,8 +1,8 @@
 package org.gminds.accounting_service.model;
 
 import jakarta.persistence.*;
+import org.gminds.accounting_service.model.enums.FiscalValueType;
 import org.gminds.accounting_service.model.enums.LimitCondition;
-import org.gminds.accounting_service.model.enums.TaxType;
 
 @Entity
 public class FiscalValue {
@@ -11,8 +11,8 @@ public class FiscalValue {
     private Long id;
     private Integer fiscalYear;
     @Enumerated(EnumType.STRING)
-    private TaxType taxType;
-    private String taxSubtype;
+    private FiscalValueType fiscalValueType;
+    private String fiscalValueSubtype;
     private Double limitValue;
     @Enumerated(EnumType.STRING)
     private LimitCondition limitCondition;
@@ -34,20 +34,20 @@ public class FiscalValue {
         this.fiscalYear = fiscalYear;
     }
 
-    public TaxType getTaxType() {
-        return taxType;
+    public FiscalValueType getFiscalValueType() {
+        return fiscalValueType;
     }
 
-    public void setTaxType(TaxType taxType) {
-        this.taxType = taxType;
+    public void setFiscalValueType(FiscalValueType fiscalValueType) {
+        this.fiscalValueType = fiscalValueType;
     }
 
-    public String getTaxSubtype() {
-        return taxSubtype;
+    public String getFiscalValueSubtype() {
+        return fiscalValueSubtype;
     }
 
-    public void setTaxSubtype(String taxSubtype) {
-        this.taxSubtype = taxSubtype;
+    public void setFiscalValueSubtype(String fiscalValueSubtype) {
+        this.fiscalValueSubtype = fiscalValueSubtype;
     }
 
     public Double getLimitValue() {
