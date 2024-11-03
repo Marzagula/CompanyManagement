@@ -1,24 +1,21 @@
 package org.gminds.accounting_service.model;
 
-
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "transaction_type", discriminatorType = DiscriminatorType.STRING)
-public abstract class Transaction extends Auditable<String> {
-    protected LocalDate transactionDate;
-    protected String description;
-    protected String counterparty;
-    protected Double amount;
+public class Transaction extends Auditable<String>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    LocalDateTime transactionDate;
     @ManyToOne
     @JoinColumn(name = "ledger_account_id")
     private LedgerAccount ledgerAccount;
+    @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL)
+    List<TransactionItem> transactionItems;
 
     public Long getId() {
         return id;
@@ -28,35 +25,19 @@ public abstract class Transaction extends Auditable<String> {
         this.id = id;
     }
 
-    public LocalDate getTransactionDate() {
+    public LocalDateTime getTransactionDate() {
         return transactionDate;
     }
 
-    public void setTransactionDate(LocalDate transactionDate) {
+    public void setTransactionDate(LocalDateTime transactionDate) {
         this.transactionDate = transactionDate;
     }
 
-    public String getDescription() {
-        return description;
+    public LedgerAccount getLedgerAccount() {
+        return ledgerAccount;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCounterparty() {
-        return counterparty;
-    }
-
-    public void setCounterparty(String counterparty) {
-        this.counterparty = counterparty;
-    }
-
-    public Double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Double amount) {
-        this.amount = amount;
+    public void setLedgerAccount(LedgerAccount ledgerAccount) {
+        this.ledgerAccount = ledgerAccount;
     }
 }

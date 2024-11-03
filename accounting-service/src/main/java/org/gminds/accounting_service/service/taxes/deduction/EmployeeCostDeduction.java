@@ -1,20 +1,22 @@
-package org.gminds.accounting_service.service.taxes;
+package org.gminds.accounting_service.service.taxes.deduction;
 
 import org.gminds.accounting_service.model.LedgerAccount;
-import org.gminds.accounting_service.model.Salary;
-import org.gminds.accounting_service.model.TaxTransaction;
+import org.gminds.accounting_service.model.SalaryTransactionItem;
+import org.gminds.accounting_service.model.TaxTransactionItem;
 import org.gminds.accounting_service.model.enums.FiscalValueType;
 import org.gminds.accounting_service.model.enums.TaxCategory;
 import org.gminds.accounting_service.repository.FiscalValuesRepository;
 import org.gminds.accounting_service.repository.LedgerAccountRepository;
 import org.gminds.accounting_service.service.CachedEmployeeService;
+import org.gminds.accounting_service.service.taxes.TaxDeduction;
+import org.gminds.accounting_service.service.taxes.ZUSCalculator;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EmployeeCostDeduction implements TaxDeduction<Salary> {
+public class EmployeeCostDeduction implements TaxDeduction<SalaryTransactionItem> {
 
     private final FiscalValuesRepository fiscalValuesRepository;
     private final LedgerAccountRepository ledgerAccountRepository;
@@ -32,7 +34,7 @@ public class EmployeeCostDeduction implements TaxDeduction<Salary> {
     }
 
     @Override
-    public BigDecimal calculateDeduction(Salary transaction) {
+    public BigDecimal calculateDeduction(SalaryTransactionItem transaction) {
         List<FiscalValueType> fiscalValueTypes = List.of(FiscalValueType.TAX_DEDUCTION, FiscalValueType.TAX_BRACKET);
         Map<String, BigDecimal> fiscalValues = new HashMap<>();
 
@@ -53,14 +55,14 @@ public class EmployeeCostDeduction implements TaxDeduction<Salary> {
         LedgerAccount ledgerAccount = ledgerAccountRepository.findByAccountNameWithTransactions("UOP");
         BigDecimal incomeBaseSummary = ledgerAccount.getTransactions()
                 .stream()
-                .filter(trans -> trans instanceof Salary && ((Salary) trans).getEmployeeId().equals(transaction.getEmployeeId()))
-                .map(trans -> (Salary) trans)
+                .filter(trans -> trans instanceof SalaryTransactionItem && ((SalaryTransactionItem) trans).getEmployeeId().equals(transaction.getEmployeeId()))
+                .map(trans -> (SalaryTransactionItem) trans)
                 .map(trans -> BigDecimal.valueOf(trans.getAmount()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add)/*.add(BigDecimal.valueOf(transaction.getAmount()))*/;
         BigDecimal zusTaxSummary = ledgerAccount.getTransactions()
                 .stream()
-                .filter(trans -> trans instanceof TaxTransaction && ((TaxTransaction) trans).getEmployeeId().equals(transaction.getEmployeeId()))
-                .map(trans -> (TaxTransaction) trans)
+                .filter(trans -> trans instanceof TaxTransactionItem && ((TaxTransactionItem) trans).getEmployeeId().equals(transaction.getEmployeeId()))
+                .map(trans -> (TaxTransactionItem) trans)
                 .filter(taxTransaction -> taxTransaction.getTaxCategory().equals(TaxCategory.ZUS))
                 .map(trans -> getEmployeeZusPart(trans))
                 .reduce(BigDecimal.ZERO, BigDecimal::add)/*.add((BigDecimal.valueOf(transaction.getAmount())).multiply(zusCalculator.getEmployeeZusPart()))*/;
@@ -87,11 +89,11 @@ public class EmployeeCostDeduction implements TaxDeduction<Salary> {
         return "employee_costs";
     }
 
-    private BigDecimal getEmployeeZusPart(TaxTransaction taxTransaction) {
+    private BigDecimal getEmployeeZusPart(TaxTransactionItem taxTransaction) {
         return BigDecimal.valueOf(taxTransaction.getTaxBase()).multiply(zusCalculator.getEmployeeZusPart());
     }
 
-    private boolean checkIfOutsideClauseInForce(Salary transaction) {
+    private boolean checkIfOutsideClauseInForce(SalaryTransactionItem transaction) {
         return cachedEmployeeService.getCachedEmployees()
                 .stream()
                 .filter(employeeDTO -> employeeDTO.id().equals(transaction.getEmployeeId()))

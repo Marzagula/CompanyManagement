@@ -36,14 +36,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
-public class TaxesParametrizedTest {
+public class TaxesParametrizedTestU26 {
 
     @Parameterized.Parameter(0)
-    public BigDecimal incomeAmount;
+    public double incomeAmount;
     @Parameterized.Parameter(1)
-    public BigDecimal expectedZUSTax;
+    public double expectedZUSTax;
     @Parameterized.Parameter(2)
-    public BigDecimal expectedPITTax;
+    public double expectedPITTax;
     @Parameterized.Parameter(3)
     public int fiscalYear;
 
@@ -63,22 +63,23 @@ public class TaxesParametrizedTest {
     @Parameterized.Parameters(name = "{index}: Test with salary={0}, expectedZusTax={1}, expectedPitTax={2}, fiscalYear={3}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {BigDecimal.valueOf(10000), BigDecimal.valueOf(4196), BigDecimal.valueOf(705), 2024},
-                {BigDecimal.valueOf(20000), BigDecimal.valueOf(8391), BigDecimal.valueOf(3162), 2024},
-                {BigDecimal.valueOf(18000), BigDecimal.valueOf(7552), BigDecimal.valueOf(2590), 2024},
-                {BigDecimal.valueOf(17000), BigDecimal.valueOf(7133), BigDecimal.valueOf(2314), 2024},
-                {BigDecimal.valueOf(15000), BigDecimal.valueOf(6293), BigDecimal.valueOf(1762), 2024},
-                {BigDecimal.valueOf(22000), BigDecimal.valueOf(9230), BigDecimal.valueOf(3802), 2024},
-                {BigDecimal.valueOf(32000), BigDecimal.valueOf(13426), BigDecimal.valueOf(7002), 2024},
-                {BigDecimal.valueOf(40000), BigDecimal.valueOf(16782), BigDecimal.valueOf(9562), 2024},
-                {BigDecimal.valueOf(120000), BigDecimal.valueOf(10800), BigDecimal.valueOf(35162), 2024},//2 wyplaty sprawily ze z wplat do zusu jest wliczana juz tylko zdrowotna
-                {BigDecimal.valueOf(130000), BigDecimal.valueOf(11700), BigDecimal.valueOf(38362), 2024},//2 wyplaty sprawily ze z wplat do zusu jest wliczana juz tylko zdrowotna
-                {BigDecimal.valueOf(30000), BigDecimal.valueOf(12587), BigDecimal.valueOf(6362), 2024},
-                {BigDecimal.valueOf(16687), BigDecimal.valueOf(7001), BigDecimal.valueOf(2228), 2024},
-                {BigDecimal.valueOf(250000), BigDecimal.valueOf(22500), BigDecimal.valueOf(76762), 2024},//pierwsza wyplata sprawila ze z wplat do zusu jest wliczana juz tylko zdrowotna
+                {10000, 4196.0, 187.0, 2024},
+                {20000, 8391.0, 1437.0, 2024},
+                {18000, 7552.0, 906.0, 2024},
+                {17000, 7133.0, 830.0, 2024},
+                {15000, 6293.0, 1762.0, 2024},
+                {22000, 9230.0, 623.0, 2024},
+                {32000, 13426.0, 5154.0, 2024},
+                {40000, 16782.0, 8038.0, 2024},
+                {120000, 10800.0, 34928.0, 2024},//2 wyplaty sprawily ze z wplat do zusu jest wliczana juz tylko zdrowotna
+                {130000, 11700.0, 37906.0, 2024},//2 wyplaty sprawily ze z wplat do zusu jest wliczana juz tylko zdrowotna
+                {30000, 12587.0, 4731.0, 2024},
+                {16687, 7001.0, 797.0, 2024},
+                {250000, 22500.0, 73875.0, 2024},//pierwsza wyplata sprawila ze z wplat do zusu jest wliczana juz tylko zdrowotna
 
         });
     }
+
 
     @Before
     public void setUp() {
@@ -89,15 +90,16 @@ public class TaxesParametrizedTest {
 
 
     @Test
-    public void TaxesCalculateTest() {
+    public void TaxesCalculateTestUnderAge26() {
         SalaryTransactionItem salaryTransactionItem = new SalaryTransactionItem();
-        salaryTransactionItem.setAmount(incomeAmount.doubleValue());
+        salaryTransactionItem.setAmount(incomeAmount);
         salaryTransactionItem.setEmployeeId(3L);
         salaryTransactionItem.setTransactionDate(LocalDate.of(2024, Month.MARCH, 1));
 
         when(taxRepository.findByFiscalYear(fiscalYear)).thenReturn(taxes2024());
         when(fiscalValuesRepository.findByFiscalYear(fiscalYear)).thenReturn(fiscalValues2024());
         when(ledgerAccountRepository.findByAccountNameWithTransactions("UOP")).thenReturn(uopLedgerAccount());
+        when(cachedEmployeeService.getCachedEmployees()).thenReturn(cachedEmployees());
         BigDecimal zusTaxAmount = zusCalculator.calculateTax(salaryTransactionItem);
         assertEquals(expectedZUSTax, zusTaxAmount);
 
@@ -115,10 +117,10 @@ public class TaxesParametrizedTest {
                 1L
         );
         List<EmployeeAgreementClauseDTO> clauses = new ArrayList<>();
-        //clauses.add(employeeAgreementClauseDTO);
+        clauses.add(employeeAgreementClauseDTO);
         EmployeeAgreementDTO agreementDTO = new EmployeeAgreementDTO(
                 1L,
-                incomeAmount.doubleValue(),
+                incomeAmount,
                 LocalDate.of(2024, Month.JANUARY, 1),
                 null,
                 AgreementStatus.ACTIVE,
@@ -313,26 +315,26 @@ public class TaxesParametrizedTest {
 
         SalaryTransactionItem salaryTransactionItem = new SalaryTransactionItem();
         salaryTransactionItem.setTransactionDate(LocalDate.of(2024, Month.JANUARY, 1));
-        salaryTransactionItem.setAmount(incomeAmount.doubleValue());
+        salaryTransactionItem.setAmount(incomeAmount);
         salaryTransactionItem.setEmployeeId(3L);
 
         TaxTransactionItem zus1 = new TaxTransactionItem();
-        zus1.setTaxBase(incomeAmount.doubleValue());
+        zus1.setTaxBase(incomeAmount);
         zus1.setTransactionDate(LocalDate.of(2024, Month.JANUARY, 1));
         zus1.setTaxCategory(TaxCategory.ZUS);
-        zus1.setAmount(incomeAmount.doubleValue() * 0.1371);
+        zus1.setAmount(incomeAmount * 0.1371);
         zus1.setEmployeeId(3L);
 
         SalaryTransactionItem salaryTransactionItem2 = new SalaryTransactionItem();
         salaryTransactionItem2.setTransactionDate(LocalDate.of(2024, Month.FEBRUARY, 1));
-        salaryTransactionItem2.setAmount(incomeAmount.doubleValue());
+        salaryTransactionItem2.setAmount(incomeAmount);
         salaryTransactionItem2.setEmployeeId(3L);
 
         TaxTransactionItem zus2 = new TaxTransactionItem();
-        zus2.setTaxBase(incomeAmount.doubleValue());
+        zus2.setTaxBase(incomeAmount);
         zus2.setTransactionDate(LocalDate.of(2024, Month.JANUARY, 1));
         zus2.setTaxCategory(TaxCategory.ZUS);
-        zus2.setAmount(incomeAmount.doubleValue() * 0.1371);
+        zus2.setAmount(incomeAmount * 0.1371);
         zus2.setEmployeeId(3L);
 
         ledgerAccount.getTransactions().add(salaryTransactionItem);

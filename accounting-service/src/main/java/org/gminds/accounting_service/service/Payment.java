@@ -1,7 +1,7 @@
 package org.gminds.accounting_service.service;
 
-import org.gminds.accounting_service.model.Transaction;
+import org.gminds.accounting_service.model.TransactionItem;
 
 public interface Payment {
-    void makePayment(Transaction transaction);
+    void makePayment(TransactionItem transactionItem);
 }

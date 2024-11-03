@@ -1,9 +1,9 @@
 package org.gminds.accounting_service.service.taxes;
 
 import org.gminds.accounting_service.model.FiscalValue;
-import org.gminds.accounting_service.model.Salary;
+import org.gminds.accounting_service.model.SalaryTransactionItem;
 import org.gminds.accounting_service.model.Tax;
-import org.gminds.accounting_service.model.TaxTransaction;
+import org.gminds.accounting_service.model.TaxTransactionItem;
 import org.gminds.accounting_service.model.enums.TaxCategory;
 import org.gminds.accounting_service.repository.FiscalValuesRepository;
 import org.gminds.accounting_service.repository.LedgerAccountRepository;
@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class ZUSCalculator implements TaxCalculator<Salary> {
+public class ZUSCalculator implements TaxCalculator<SalaryTransactionItem> {
 
     private final TaxRepository taxRepository;
     private final LedgerAccountRepository ledgerAccountRepository;
@@ -44,14 +44,14 @@ public class ZUSCalculator implements TaxCalculator<Salary> {
     }
 
     @Override
-    public BigDecimal calculateTax(Salary transaction) {
+    public BigDecimal calculateTax(SalaryTransactionItem transaction) {
         init(transaction.getTransactionDate().getYear());
-        List<TaxTransaction> transactions = ledgerAccountRepository.findByAccountNameWithTransactions("UOP").getTransactions()
+        List<TaxTransactionItem> transactions = ledgerAccountRepository.findByAccountNameWithTransactions("UOP").getTransactions()
                 .stream()
-                .filter(trans -> trans instanceof TaxTransaction)
-                .filter(trans -> ((TaxTransaction) trans).getEmployeeId() == transaction.getEmployeeId())
-                .filter(trans -> ((TaxTransaction) trans).getTaxCategory().equals(TaxCategory.ZUS))
-                .map(trans -> (TaxTransaction) trans)
+                .filter(trans -> trans instanceof TaxTransactionItem)
+                .filter(trans -> ((TaxTransactionItem) trans).getEmployeeId() == transaction.getEmployeeId())
+                .filter(trans -> ((TaxTransactionItem) trans).getTaxCategory().equals(TaxCategory.ZUS))
+                .map(trans -> (TaxTransactionItem) trans)
                 .toList();
 
         BigDecimal currentZUSBaseSummary = transactions.stream()
@@ -68,15 +68,8 @@ public class ZUSCalculator implements TaxCalculator<Salary> {
                 currentZUSBaseSummary,
                 transaction.getTransactionDate().getMonthValue()
         );
-        BigDecimal healthTaxPercentage = taxes.stream()
-                .filter(tax -> tax.getTaxCategory().equals(TaxCategory.HEALTH))
-                .map(tax -> BigDecimal.valueOf(tax.getPercentage()))
-                .findFirst().orElseThrow();
 
-        BigDecimal healthTax = (monthlyIncome
-                .subtract(employeeZusTax))
-                .multiply(healthTaxPercentage
-                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
+        BigDecimal healthTax = getHealthCareTax(monthlyIncome,employeeZusTax);
         return employeeZusTax.add(healthTax).add(employerZusTax)
                 .setScale(0, RoundingMode.HALF_UP);
     }
@@ -85,13 +78,23 @@ public class ZUSCalculator implements TaxCalculator<Salary> {
 
         return taxes.stream()
                 .filter(tax -> tax.getTaxCategory().equals(TaxCategory.ZUS) &&
-                        (tax.getTaxSubcategory().equals("emerytalna pracownika") ||
-                                tax.getTaxSubcategory().equals("rentowa pracownika") ||
-                                tax.getTaxSubcategory().equals("chorobowa"))
+                        employeeSubcategories.contains(tax.getTaxSubcategory())
                 )
                 .map(tax -> BigDecimal.valueOf(tax.getPercentage()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+    }
+
+    public BigDecimal getHealthCareTax(BigDecimal monthlyIncome, BigDecimal employeeZusTax){
+        BigDecimal healthTaxPercentage = taxes.stream()
+                .filter(tax -> tax.getTaxCategory().equals(TaxCategory.HEALTH))
+                .map(tax -> BigDecimal.valueOf(tax.getPercentage()))
+                .findFirst().orElseThrow();
+
+        return (monthlyIncome
+                .subtract(employeeZusTax))
+                .multiply(healthTaxPercentage
+                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
     }
 
     public BigDecimal getEmployeeZusTax(BigDecimal income, BigDecimal zusBaseSummary, int monthNo) {

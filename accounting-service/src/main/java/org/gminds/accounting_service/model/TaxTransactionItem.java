@@ -6,7 +6,7 @@ import org.gminds.accounting_service.model.enums.TaxCategory;
 import java.time.LocalDate;
 
 @Entity
-public class TaxTransaction extends Transaction {
+public class TaxTransactionItem extends TransactionItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,16 +15,16 @@ public class TaxTransaction extends Transaction {
     private Double taxBase;
     private Long employeeId;
 
-    public TaxTransaction() {
+    public TaxTransactionItem() {
     }
 
-    public TaxTransaction(TaxCategory taxCategory,
-                          Double taxBase,
-                          Long employeeId,
-                          String description,
-                          String counterparty,
-                          Double amount,
-                          LocalDate transactionDate) {
+    public TaxTransactionItem(TaxCategory taxCategory,
+                              Double taxBase,
+                              Long employeeId,
+                              String description,
+                              String counterparty,
+                              Double amount,
+                              LocalDate transactionDate) {
         this.taxCategory = taxCategory;
         this.employeeId = employeeId;
         this.description = description;

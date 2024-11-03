@@ -9,12 +9,13 @@ import org.gminds.accounting_service.service.taxes.PITCalculator;
 import org.gminds.accounting_service.service.taxes.TaxDeduction;
 import org.gminds.accounting_service.service.taxes.ZUSCalculator;
 import org.gminds.accounting_service.service.taxes.builder.TaxTransactionBuilder;
-import org.gminds.accounting_service.service.taxes.factory.DeductionFactory;
+import org.gminds.accounting_service.service.taxes.deduction.DeductionFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/*TODO cachowanie stalych wartosci fiskalnych takich jak limity, podatki itp*/
 public class EmployeePayment implements Payment {
     /*rozlozenie placy na zus, podatek dochodowy, vat i pozostala czesc(netto)
      * stworzenie osobnych transakcji dla kazdej z tych czesci,
@@ -23,14 +24,14 @@ public class EmployeePayment implements Payment {
      * */
     private final PITCalculator pitCalculator;
     private final ZUSCalculator zusCalculator;
-    private final DeductionFactory<Salary> deductionFactory;
+    private final DeductionFactory<SalaryTransactionItem> deductionFactory;
     private final FiscalValuesRepository fiscalValuesRepository;
     private final LedgerAccountRepository ledgerAccountRepository;
     private LedgerAccount ledgerAccount;
 
     public EmployeePayment(PITCalculator pitCalculator,
                            ZUSCalculator zusCalculator,
-                           DeductionFactory<Salary> deductionFactory,
+                           DeductionFactory<SalaryTransactionItem> deductionFactory,
                            FiscalValuesRepository fiscalValuesRepository,
                            LedgerAccountRepository ledgerAccountRepository) {
         this.pitCalculator = pitCalculator;
@@ -42,26 +43,25 @@ public class EmployeePayment implements Payment {
     }
 
     @Override
-    public void makePayment(Transaction transaction) {
-        //int fiscalYear = transaction.getTransactionDate().getYear();
-        if (transaction instanceof Salary) {
+    public void makePayment(TransactionItem transactionItem) {
+        if (transactionItem instanceof SalaryTransactionItem) {
             ledgerAccount = ledgerAccountRepository.findByAccountNameWithTransactions("UOP");
-            createPitTransaction((Salary) transaction);
-            createZusTransaction((Salary) transaction);
+            createPitTransaction((SalaryTransactionItem) transactionItem);
+            createZusTransaction((SalaryTransactionItem) transactionItem);
+            createNetPayout((SalaryTransactionItem) transactionItem);
             ledgerAccountRepository.save(ledgerAccount);
         }
-        /*TODO to tu beda sie odbywac wszelkie odliczenia od podatku ktory zostanie najpierw policzony w calosci*/
 
     }
 
-    void createPitTransaction(Salary transaction) {
+    private void createPitTransaction(SalaryTransactionItem transaction) {
         BigDecimal totalDeduction = BigDecimal.ZERO;
         BigDecimal pitTax;
         List<FiscalValue> deductionFiscalValues = fiscalValuesRepository.findByFiscalYear(transaction.getTransactionDate().getYear())
                 .stream()
                 .filter(fiscalValue -> fiscalValue.getFiscalValueType().equals(FiscalValueType.TAX_DEDUCTION))
                 .toList();
-        List<TaxDeduction<Salary>> taxDeductions = new ArrayList<>();
+        List<TaxDeduction<SalaryTransactionItem>> taxDeductions = new ArrayList<>();
         deductionFiscalValues.forEach(fiscalValue -> {
             taxDeductions.add(deductionFactory.getProcessor(fiscalValue.getFiscalValueType(), fiscalValue.getFiscalValueSubtype()));
         });
@@ -76,7 +76,7 @@ public class EmployeePayment implements Payment {
         String pitDescription = "PIT tax for employee with ID: " + transaction.getEmployeeId();
         BigDecimal transAmount = BigDecimal.valueOf(transaction.getAmount());
         BigDecimal taxBase = transAmount.subtract(zusCalculator.getEmployeeZusPart().multiply(transAmount));
-        TaxTransaction pitTransaction = new TaxTransactionBuilder()
+        TaxTransactionItem pitTransaction = new TaxTransactionBuilder()
                 .setTransactionDate(transaction.getTransactionDate())
                 .setEmployeeId(transaction.getEmployeeId())
                 .setAmount(pitTaxAmount.doubleValue())
@@ -88,20 +88,26 @@ public class EmployeePayment implements Payment {
         ledgerAccount.getTransactions().add(pitTransaction);
     }
 
-    void createZusTransaction(Salary transaction) {
+    private void createZusTransaction(SalaryTransactionItem transaction) {
 
         BigDecimal zusTaxAmount = zusCalculator.calculateTax(transaction);
         String zusDescription = "Full ZUS + HEALTH tax for employee with ID: " + transaction.getEmployeeId();
-
-        TaxTransaction zusTransaction = new TaxTransactionBuilder()
+                TaxTransactionItem zusTransaction = new TaxTransactionBuilder()
                 .setTransactionDate(transaction.getTransactionDate())
                 .setEmployeeId(transaction.getEmployeeId())
                 .setAmount(zusTaxAmount.doubleValue())
                 .setDescription(zusDescription)
                 .setTaxBase(transaction.getAmount())
-                .setTaxCategory(TaxCategory.PIT)
+                .setTaxCategory(TaxCategory.ZUS)
                 .getTaxTransaction();
 
         ledgerAccount.getTransactions().add(zusTransaction);
+    }
+
+    /*TODO To co obecnie jest transakcjami ma byc transaction itemami a transakcja bedzie jedna nadrzedna
+       do ktorej sie beda odnosic (transactionId).
+       Trzeba stworzyc nowy typ transaction itemu (Payout) albo inaczej to obslugiwac
+       */
+    private void createNetPayout(SalaryTransactionItem transaction){
     }
 }

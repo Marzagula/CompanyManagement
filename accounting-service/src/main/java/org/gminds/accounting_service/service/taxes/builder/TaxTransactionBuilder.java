@@ -1,6 +1,6 @@
 package org.gminds.accounting_service.service.taxes.builder;
 
-import org.gminds.accounting_service.model.TaxTransaction;
+import org.gminds.accounting_service.model.TaxTransactionItem;
 import org.gminds.accounting_service.model.enums.TaxCategory;
 
 import java.time.LocalDate;
@@ -49,7 +49,7 @@ public class TaxTransactionBuilder {
         return this;
     }
 
-    public TaxTransaction getTaxTransaction() {
-        return new TaxTransaction(taxCategory, taxBase, employeeId, description, counterparty, amount, transactionDate);
+    public TaxTransactionItem getTaxTransaction() {
+        return new TaxTransactionItem(taxCategory, taxBase, employeeId, description, counterparty, amount, transactionDate);
     }
 }

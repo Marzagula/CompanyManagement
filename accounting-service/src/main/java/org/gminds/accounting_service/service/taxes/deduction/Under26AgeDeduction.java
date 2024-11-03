@@ -1,8 +1,9 @@
-package org.gminds.accounting_service.service.taxes;
+package org.gminds.accounting_service.service.taxes.deduction;
 
-import org.gminds.accounting_service.model.Salary;
-import org.gminds.accounting_service.model.TaxTransaction;
+import org.gminds.accounting_service.model.SalaryTransactionItem;
+import org.gminds.accounting_service.model.TaxTransactionItem;
 import org.gminds.accounting_service.model.Transaction;
+import org.gminds.accounting_service.model.TransactionItem;
 import org.gminds.accounting_service.model.enums.FiscalValueType;
 import org.gminds.accounting_service.model.enums.TaxCategory;
 import org.gminds.accounting_service.model.enums.employee.AgreementStatus;
@@ -10,6 +11,9 @@ import org.gminds.accounting_service.repository.FiscalValuesRepository;
 import org.gminds.accounting_service.repository.LedgerAccountRepository;
 import org.gminds.accounting_service.repository.TaxRepository;
 import org.gminds.accounting_service.service.CachedEmployeeService;
+import org.gminds.accounting_service.service.taxes.PITCalculator;
+import org.gminds.accounting_service.service.taxes.TaxDeduction;
+import org.gminds.accounting_service.service.taxes.ZUSCalculator;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -21,7 +25,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class Under26AgeDeduction implements TaxDeduction<Salary> {
+public class Under26AgeDeduction implements TaxDeduction<SalaryTransactionItem> {
 
     private final CachedEmployeeService cachedEmployeeService;
     private final FiscalValuesRepository fiscalValuesRepository;
@@ -46,7 +50,7 @@ public class Under26AgeDeduction implements TaxDeduction<Salary> {
     }
 
     @Override
-    public BigDecimal calculateDeduction(Salary transaction) {
+    public BigDecimal calculateDeduction(SalaryTransactionItem transaction) {
         Map<String, BigDecimal> taxes = taxRepository.findByFiscalYear(transaction.getTransactionDate().getYear())
                 .stream()
                 .filter(tax -> tax.getTaxCategory().equals(TaxCategory.PIT))
@@ -58,17 +62,17 @@ public class Under26AgeDeduction implements TaxDeduction<Salary> {
                         fiscalValue -> fiscalValue.getFiscalValueSubtype(),
                         fiscalValue -> BigDecimal.valueOf(fiscalValue.getLimitValue())
                 ));
-        List<Transaction> transactions = ledgerAccountRepository.findByAccountNameWithTransactions("UOP").getTransactions();
+        List<Transaction> transactionItems = ledgerAccountRepository.findByAccountNameWithTransactions("UOP").getTransactions();
 
-        List<Salary> salaries = transactions
+        List<SalaryTransactionItem> salaries = transactionItems
                 .stream()
-                .filter(trans -> trans instanceof Salary && Objects.equals(((Salary) trans).getEmployeeId(), transaction.getEmployeeId()))
-                .map(trans -> (Salary) trans)
+                .filter(trans -> trans instanceof SalaryTransactionItem && Objects.equals(((SalaryTransactionItem) trans).getEmployeeId(), transaction.getEmployeeId()))
+                .map(trans -> (SalaryTransactionItem) trans)
                 .toList();
-        List<TaxTransaction> zusTransaction = transactions
+        List<TaxTransactionItem> zusTransaction = transactionItems
                 .stream()
-                .filter(trans -> trans instanceof TaxTransaction && Objects.equals(((TaxTransaction) trans).getEmployeeId(), transaction.getEmployeeId()))
-                .map(trans -> (TaxTransaction) trans)
+                .filter(trans -> trans instanceof TaxTransactionItem && Objects.equals(((TaxTransactionItem) trans).getEmployeeId(), transaction.getEmployeeId()))
+                .map(trans -> (TaxTransactionItem) trans)
                 .filter(taxTransaction -> taxTransaction.getTaxCategory().equals(TaxCategory.ZUS))
                 .toList();
         BigDecimal zusBaseSummary = zusTransaction.stream()
@@ -93,10 +97,10 @@ public class Under26AgeDeduction implements TaxDeduction<Salary> {
         return BigDecimal.ZERO;
     }
 
-    boolean checkIfUnder26ClauseInForce(Salary salary, LocalDate transactionDate) {
+    boolean checkIfUnder26ClauseInForce(SalaryTransactionItem salaryTransactionItem, LocalDate transactionDate) {
         return cachedEmployeeService.getCachedEmployees()
                 .stream()
-                .filter(employeeDTO -> Objects.equals(employeeDTO.id(), salary.getEmployeeId()))
+                .filter(employeeDTO -> Objects.equals(employeeDTO.id(), salaryTransactionItem.getEmployeeId()))
                 .flatMap(employeeDTO -> employeeDTO.agreements().stream())
                 .filter(employeeAgreementDTO -> employeeAgreementDTO.status().equals(AgreementStatus.ACTIVE))
                 .flatMap(employeeAgreementDTO -> employeeAgreementDTO.clauses().stream())

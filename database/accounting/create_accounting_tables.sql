@@ -27,7 +27,7 @@ CREATE TABLE ledger_account (
     end_date DATE
 );
 
-CREATE TABLE transaction (
+CREATE TABLE transaction_item (
     id BIGSERIAL PRIMARY KEY,
     created_by VARCHAR(255),
     created_date TIMESTAMP,

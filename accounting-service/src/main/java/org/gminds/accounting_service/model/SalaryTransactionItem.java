@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @DiscriminatorValue("SALARY")
-public class Salary extends Transaction {
+public class SalaryTransactionItem extends TransactionItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

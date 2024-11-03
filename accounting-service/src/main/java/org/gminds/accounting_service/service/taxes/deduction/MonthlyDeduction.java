@@ -1,15 +1,16 @@
-package org.gminds.accounting_service.service.taxes;
+package org.gminds.accounting_service.service.taxes.deduction;
 
-import org.gminds.accounting_service.model.Salary;
+import org.gminds.accounting_service.model.SalaryTransactionItem;
 import org.gminds.accounting_service.model.enums.FiscalValueType;
 import org.gminds.accounting_service.repository.FiscalValuesRepository;
+import org.gminds.accounting_service.service.taxes.TaxDeduction;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Component
-public class MonthlyDeduction implements TaxDeduction<Salary> {
+public class MonthlyDeduction implements TaxDeduction<SalaryTransactionItem> {
     private final FiscalValuesRepository fiscalValuesRepository;
 
     public MonthlyDeduction(FiscalValuesRepository fiscalValuesRepository) {
@@ -17,7 +18,7 @@ public class MonthlyDeduction implements TaxDeduction<Salary> {
     }
 
     @Override
-    public BigDecimal calculateDeduction(Salary transaction) {
+    public BigDecimal calculateDeduction(SalaryTransactionItem transaction) {
         return fiscalValuesRepository.findByFiscalYear(2024)
                 .stream()
                 .filter(fiscalValue -> fiscalValue.getFiscalValueSubtype().equals("maximum_deduction"))
