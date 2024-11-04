@@ -3,6 +3,7 @@
 type EmployeeDTO {
     id: ID
     name: String
+    surname: String
     job: JobDTO!
     agreements: [EmployeeAgreementDTO]!
     certificates: [EmployeeCertificateDTO]
@@ -27,6 +28,7 @@ scalar LocalDate
 type EmployeeAgreementDTO {
     id: ID!
     salary: Float
+    fromDate: LocalDate
     toDate: LocalDate
     status: String
     agreementType: String
@@ -72,4 +74,68 @@ type EmployeeDTOPage {
 type Query {
     getEmployeeById(id: ID!): EmployeeDTO
     getEmployeesPaged(page: Int, size: Int): EmployeeDTOPage
+}
+
+input EmployeeDTOInput {
+    id: ID
+    name: String
+    surname: String
+    job: JobDTOInput!
+    department: DepartmentDTOInput!
+    agreements: [EmployeeAgreementDTOInput]!
+    certificates: [EmployeeCertificateDTOInput]
+    history: [EmployeeHistoryDTOInput]
+}
+
+input JobDTOInput {
+    id: ID!
+    title: String
+    departmentId: Int
+}
+
+input DepartmentDTOInput {
+    id: ID!
+    name: String
+    description: String
+}
+
+input EmployeeAgreementDTOInput {
+    id: ID
+    salary: Float
+    fromDate: LocalDate
+    toDate: LocalDate
+    status: String
+    agreementType: String
+    paymentType: String
+    employeeId: Int
+    createdBy: String
+    createdDate: LocalDateTime
+    lastModifiedBy: String
+    lastModifiedDate: LocalDateTime
+}
+
+input EmployeeCertificateDTOInput {
+    id: ID
+    certificateName: String
+    issueDate: LocalDate
+    expiryDate: LocalDate
+    issuedBy: String
+    employeeId: Int
+    createdBy: String
+    createdDate: LocalDateTime
+    lastModifiedBy: String
+    lastModifiedDate: LocalDateTime
+}
+
+input EmployeeHistoryDTOInput {
+    id: ID
+    companyName: String
+    jobName: String
+    fromDate: LocalDate
+    toDate: LocalDate
+    employeeId: Int
+}
+
+type Mutation {
+    createEmployee(employee: EmployeeDTOInput!): EmployeeDTO
 }

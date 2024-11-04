@@ -45,7 +45,9 @@ public class EmployeeService {
             agr.setEmployee(newEmployee);
             agr.setStatus(agreementManagementService.determineAgreementStatus(agr));
         });
-        newEmployee.getEmploymentHistory().forEach(hist -> hist.setEmployee(newEmployee));
+        if (newEmployee.getEmploymentHistory() != null) {
+            newEmployee.getEmploymentHistory().forEach(hist -> hist.setEmployee(newEmployee));
+        }
         employeeValidator.validate(newEmployee);
         return EmployeeMapper.INSTANCE.toEmployeeDTO(employeeRepository.saveAndFlush(newEmployee));
     }

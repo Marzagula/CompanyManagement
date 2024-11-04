@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
@@ -44,5 +45,11 @@ public class EmployeeController implements GraphQLQueryResolver {
     public EmployeeDTO getEmployeeById(@Argument Long id) {
         logger.debug("Fetching employee with id: {}", id);
         return employeeService.getEmployeeById(id);
+    }
+
+    @MutationMapping
+    public EmployeeDTO createEmployee(@Argument("employee") EmployeeDTO employeeDTO){
+        logger.debug("Creating employee with name: {} {}", employeeDTO.name(),employeeDTO.surname());
+        return employeeService.createEmployee(employeeDTO);
     }
 }

@@ -4,16 +4,12 @@ import com.gminds.graphql_api_gateway.exceptions.ServiceException;
 import com.gminds.graphql_api_gateway.model.dtos.EmployeeDTO;
 import com.gminds.graphql_api_gateway.model.dtos.EmployeePage;
 import com.gminds.graphql_api_gateway.service.utils.SecurityUtils;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
-
-import java.util.List;
 
 @Service
 public class EmployeeService {
@@ -49,6 +45,21 @@ public class EmployeeService {
                     .body(EmployeePage.class);
 
             return new PageImpl<>(employeePage.getContent(), PageRequest.of(employeePage.getNumber(), employeePage.getSize()), employeePage.getTotalElements());
+        } catch (RestClientResponseException e) {
+            throw new ServiceException("Error retrieving employee data: " + e.getMessage());
+        }
+    }
+
+    public EmployeeDTO createEmployee(EmployeeDTO employeeDTO) {
+        String url = "http://EMPLOYEE-SERVER" + "/api/v1/employees";
+
+        try {
+            return restClient.post()
+                    .uri(url)
+                    .headers(httpHeaders -> httpHeaders.addAll(SecurityUtils.createHeadersWithToken()))
+                    .body(employeeDTO)
+                    .retrieve()
+                    .body(EmployeeDTO.class);
         } catch (RestClientResponseException e) {
             throw new ServiceException("Error retrieving employee data: " + e.getMessage());
         }

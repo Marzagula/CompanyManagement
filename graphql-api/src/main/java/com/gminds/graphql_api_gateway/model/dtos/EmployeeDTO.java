@@ -14,5 +14,5 @@ public record EmployeeDTO(Long id,
                           @NotNull DepartmentDTO department,
                           @NotNull @NotEmpty List<EmployeeAgreementDTO> agreements,
                           Set<EmployeeCertificateDTO> certificates,
-                          @NotNull List<EmploymentHistoryDTO> employmentHistory) {
+                          List<EmploymentHistoryDTO> employmentHistory) {
 }
