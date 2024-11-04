@@ -1,0 +1,28 @@
+# employee.graphqls
+
+type EmployeeDTO {
+    id: ID
+    name: String
+    job: JobDTO!
+}
+
+type JobDTO {
+    id: ID!
+    title: String
+    departmentId: Int
+}
+
+type EmployeeDTOPage {
+    content: [EmployeeDTO]!
+    pageNumber: Int!
+    pageSize: Int!
+    totalPages: Int!
+    totalElements: Int!
+}
+
+
+type Query {
+    getEmployeeById(id: ID!): EmployeeDTO
+    getAllEmployees: [EmployeeDTO]
+    getEmployeesPaged(page: Int, size: Int): EmployeeDTOPage
+}
