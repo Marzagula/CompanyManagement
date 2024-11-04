@@ -1,0 +1,75 @@
+# employee.graphqls
+
+type EmployeeDTO {
+    id: ID
+    name: String
+    job: JobDTO!
+    agreements: [EmployeeAgreementDTO]!
+    certificates: [EmployeeCertificateDTO]
+    history: [EmployeeHistoryDTO]
+}
+
+type JobDTO {
+    id: ID!
+    title: String
+    departmentId: Int
+}
+
+type DepartmentDTO {
+    id: ID!
+    name: String
+    description: String
+}
+
+scalar LocalDateTime
+scalar LocalDate
+
+type EmployeeAgreementDTO {
+    id: ID!
+    salary: Float
+    toDate: LocalDate
+    status: String
+    agreementType: String
+    paymentType: String
+    employeeId: Int
+    createdBy: String
+    createdDate: LocalDateTime
+    lastModifiedBy: String
+    lastModifiedDate: LocalDateTime
+}
+
+type EmployeeCertificateDTO {
+    id: ID!
+    certificateName: String
+    issueDate: LocalDate
+    expiryDate: LocalDate
+    issuedBy: String
+    employeeId: Int
+    createdBy: String
+    createdDate: LocalDateTime
+    lastModifiedBy: String
+    lastModifiedDate: LocalDateTime
+}
+
+type EmployeeHistoryDTO {
+    id: ID!
+    companyName: String
+    jobName: String
+    fromDate: LocalDate
+    toDate: LocalDate
+    employeeId: Int
+}
+
+type EmployeeDTOPage {
+    content: [EmployeeDTO]!
+    pageNumber: Int!
+    pageSize: Int!
+    totalPages: Int!
+    totalElements: Int!
+}
+
+
+type Query {
+    getEmployeeById(id: ID!): EmployeeDTO
+    getEmployeesPaged(page: Int, size: Int): EmployeeDTOPage
+}

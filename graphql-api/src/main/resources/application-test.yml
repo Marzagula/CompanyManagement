@@ -1,6 +1,6 @@
 spring:
   application:
-    name: graphql-api-gateway-test
+    name: graphql-api-test
   config:
     activate:
       on-profile: test

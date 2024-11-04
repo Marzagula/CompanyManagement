@@ -13,7 +13,7 @@
         <module>eureka-server</module>
         <module>auth-server</module>
         <module>employee-service</module>
-        <module>graphql-api-gateway</module>
+        <module>graphql-api</module>
     </modules>
 
     <parent>

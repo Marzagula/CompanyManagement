@@ -19,8 +19,8 @@ services:
     depends_on:
       - eureka-server
 
-  graphql-api-gateway:
-    build: ./graphql-api-gateway
+  graphql-api:
+    build: ./graphql-api
     ports:
       - "8765:8765"
 

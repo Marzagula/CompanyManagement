@@ -2,10 +2,17 @@ auth-server: http://localhost:9000
 
 spring:
   graphql:
+    datetime:
+      scalars:
+        zone-conversion-enabled: true
+        local-date:
+          format: dd-MM-yyyy
+        local-date-time:
+          format: yyyy-MM-dd'T'HH:mm:ss
     graphiql:
       enabled: true
   application:
-    name: graphql-api-gateway
+    name: graphql-api
   datasource:
     hikari:
       maximum-pool-size: 3
