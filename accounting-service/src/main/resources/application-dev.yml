@@ -1,0 +1,23 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5434/postgres
+    username: ${CM_DB_USERNAME}
+    password: ${CM_DB_PASSWORD}
+
+eureka:
+  hostname: http://localhost:8761
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    registerWithEureka: true
+    registryFetchIntervalSeconds: 10
+    instanceInfoReplicationIntervalSeconds: 10
+    fetchRegistry: true
+  instance:
+    preferIpAddress: true
+    homePageUrl: http://localhost:8761
+    statusPageUrl: https://localhost:8761/info
+    healthCheckUrl: https://localhost:8761/health

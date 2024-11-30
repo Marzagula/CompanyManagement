@@ -48,6 +48,7 @@ public class EmployeeMapperTest {
                 EmplAgreementType.B2B,
                 EmploymentPaymentType.PER_MONTH,
                 1L,
+                List.of(new EmployeeAgreementClauseDTO(1L, 1L, LocalDate.now(), LocalDate.now().plus(14, ChronoUnit.MONTHS), 1L)),
                 null,
                 null,
                 null,

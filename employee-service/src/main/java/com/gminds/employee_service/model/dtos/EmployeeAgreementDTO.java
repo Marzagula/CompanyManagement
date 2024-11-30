@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record EmployeeAgreementDTO(Long id,
                                    @NotNull @Min(0) Double salary,
@@ -17,6 +18,7 @@ public record EmployeeAgreementDTO(Long id,
                                    @NotNull EmplAgreementType agreementType,
                                    @NotNull EmploymentPaymentType paymentType,
                                    @NotNull @Min(1) Long employeeId,
+                                   List<EmployeeAgreementClauseDTO> clauses,
                                    String createdBy,
                                    LocalDateTime createdDate,
                                    String lastModifiedBy,

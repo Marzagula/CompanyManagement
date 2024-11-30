@@ -17,42 +17,42 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 class AuthServerApplicationTests {
 
-	@Mock
-	private EmployeeUserRepository employeeUserRepository;
+    @Mock
+    private EmployeeUserRepository employeeUserRepository;
 
-	@InjectMocks
-	private EmployeeUserDetailService employeeUserDetailService;
+    @InjectMocks
+    private EmployeeUserDetailService employeeUserDetailService;
 
-	public AuthServerApplicationTests() {
-		MockitoAnnotations.openMocks(this);
-	}
+    public AuthServerApplicationTests() {
+        MockitoAnnotations.openMocks(this);
+    }
 
-	@Test
-	public void testLoadUserByUsername_UserExists() {
-		// setup
-		String username = "testuser";
-		EmployeeUser testUser = new EmployeeUser(1L, username, "password123", "ROLE_USER");
-		when(employeeUserRepository.findByUsername(username)).thenReturn(testUser);
+    @Test
+    public void testLoadUserByUsername_UserExists() {
+        // setup
+        String username = "testuser";
+        EmployeeUser testUser = new EmployeeUser(1L, username, "password123", "ROLE_USER");
+        when(employeeUserRepository.findByUsername(username)).thenReturn(testUser);
 
-		// execute
-		UserDetails userDetails = employeeUserDetailService.loadUserByUsername(username);
+        // execute
+        UserDetails userDetails = employeeUserDetailService.loadUserByUsername(username);
 
-		// verify
-		assertNotNull(userDetails);
-		assertEquals(username, userDetails.getUsername());
-	}
+        // verify
+        assertNotNull(userDetails);
+        assertEquals(username, userDetails.getUsername());
+    }
 
-	@Test
-	public void testLoadUserByUsername_UserDoesNotExist() {
-		// setup
-		String username = "nonexistentuser";
-		when(employeeUserRepository.findByUsername(username)).thenReturn(null);
+    @Test
+    public void testLoadUserByUsername_UserDoesNotExist() {
+        // setup
+        String username = "nonexistentuser";
+        when(employeeUserRepository.findByUsername(username)).thenReturn(null);
 
-		// execute and verify
-		assertThrows(UsernameNotFoundException.class, () -> {
-			employeeUserDetailService.loadUserByUsername(username);
-		});
-	}
+        // execute and verify
+        assertThrows(UsernameNotFoundException.class, () -> {
+            employeeUserDetailService.loadUserByUsername(username);
+        });
+    }
 
 
 }

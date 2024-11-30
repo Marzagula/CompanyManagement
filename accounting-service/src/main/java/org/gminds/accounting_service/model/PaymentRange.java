@@ -1,12 +1,8 @@
-package com.gminds.employee_service.model;
+package org.gminds.accounting_service.model;
 
-import com.gminds.employee_service.model.enums.EmplAgreementType;
 import jakarta.persistence.*;
+import org.gminds.accounting_service.model.enums.employee.EmplAgreementType;
 
-/**
- * TODO
- * In future entity it should be moved to accounting-service
- */
 @Entity
 public class PaymentRange extends Auditable<String> {
     @Id
@@ -14,9 +10,7 @@ public class PaymentRange extends Auditable<String> {
     private Long id;
     private Double minSalary;
     private Double maxSalary;
-    @ManyToOne
-    @JoinColumn(name = "job_id")
-    private Job job;
+    private Long jobId;
     @Enumerated(EnumType.STRING)
     @Column(name = "employment_agreement_type")
     private EmplAgreementType emplAgreementType;
@@ -46,12 +40,12 @@ public class PaymentRange extends Auditable<String> {
         this.maxSalary = maxSalary;
     }
 
-    public Job getJob() {
-        return job;
+    public Long getJobId() {
+        return jobId;
     }
 
-    public void setJob(Job job) {
-        this.job = job;
+    public void setJob(Long jobId) {
+        this.jobId = jobId;
     }
 
     public EmplAgreementType getEmplAgreementType() {
@@ -69,4 +63,5 @@ public class PaymentRange extends Auditable<String> {
     public void setFiscalYear(Integer fiscalYear) {
         this.fiscalYear = fiscalYear;
     }
+
 }

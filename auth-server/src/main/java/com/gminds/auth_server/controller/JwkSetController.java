@@ -19,9 +19,9 @@ public class JwkSetController {
     private final RsaKeyProperties rsaKeys;
 
     @Autowired
-    public JwkSetController(JWKSource<SecurityContext> jwkSource,   RsaKeyProperties rsaKeys) {
+    public JwkSetController(JWKSource<SecurityContext> jwkSource, RsaKeyProperties rsaKeys) {
         this.jwkSource = jwkSource;
-        this.rsaKeys  = rsaKeys;
+        this.rsaKeys = rsaKeys;
     }
 
     @GetMapping("/jwks")
